@@ -1,0 +1,105 @@
+{% block title %}
+    Start Counting!
+{% endblock %}
+{% block content %}
+    <style>
+        td {
+            text-align: center;
+
+        }
+        th {
+            text-align: center;
+        }
+    </style>
+    <p>
+    Hi! Your task is to count all of the 0s in the table here. If you can answer the number of zeros correctly<br>
+    you will be rewarded with XXXXXXXXXXXXXXXX dollars! Good luck!
+    {% C.zeros %}
+
+    </p>
+    <table class = "table table-bordered table-hover">
+        <thread>
+            <tr class = "table-info">
+                <th scope="col">#</th>
+                <th scope="col">1</th>
+                <th scope="col">2</th>
+                <th scope="col">3</th>
+                <th scope="col">4</th>
+                <th scope="col">5</th>
+                <th scope="col">6</th>
+                <th scope="col">7</th>
+                <th scope="col">8</th>
+                <th scope="col">9</th>
+                <th scope="col">10</th>
+            </tr>
+        </thread>
+        <tbody id = "data_body"> </tbody>
+    </table>
+    <script>
+       function extract_values(string_data){
+            let i = 0
+            let j = i + 10
+            let data = Array(15)
+            var row_data = '';
+            while (i < 150) {
+               row_data = string_data.slice(i, j)
+               data[i / 10] = Array(10).fill(0)
+               for (var k = 0; k < row_data.length; k++) {
+                   data[i / 10][k] = ~~row_data[k]
+               }
+               i += 10
+               j += 10
+           }
+           console.log(data)
+           return data
+       }
+       function buildTable(matrix){
+            let table = document.getElementById('data_body')
+
+            for (let i = 0; i < 15; i++){
+                let row = []
+                    row =`<tr>
+                            <th class = " table-bordered table-info table-hover" scope="row">${i+1}</th>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][0]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][1]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][2]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][3]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][4]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][5]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][6]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][7]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][8]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][9]}</td>
+                          </tr>`
+                table.innerHTML += row
+            }
+        }
+        let data = extract_values(`{% C.string_matrix %}`)
+        buildTable(data)
+    </script>
+    {% formfields %}
+    {% next_button %}
+<!--
+    {% comment %} function generateData() {
+        const R = 15, C = 10, randomizer = Math.random()
+        let zeros = 0, ones = 0
+        var data = Array(R)
+        for (var i = 0; i < R; i++) {
+            data[i] = Array(C).fill(0)
+            for (var j = 0; j < C; j++) {
+                if (Math.random() < randomizer) {
+                    data[i][j] = 0
+                    zeros++
+                } else {
+                    data[i][j] = 1
+                    ones++
+                }
+            }
+        }
+        console.log("Zeros: %s", zeros)
+        console.log("Ones: %s", ones)
+
+        return data
+    }{% endcomment %}
+-->
+{% endblock %}
