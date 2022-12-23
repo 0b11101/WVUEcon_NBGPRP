@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% block title %}
+    Results Wait page
+{% endblock %}
+
+{% block content %}
+    The number of zeros was {% player.zeros_actual %} and you guessed {% player.zeros_guess %} <br>
+    You've earned {% player.payoff %} so far!
+
+    {% next_button %}
+{% endblock %}
