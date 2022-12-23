@@ -32,6 +32,7 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     num_trials = models.IntegerField(initial=0)
     num_correct = models.IntegerField(initial=0)
+    table_goal = models.IntegerField(intitial=10)
 
     feedback = models.StringField(initial="You\'ll see feedback here")
     zeros_actual = models.IntegerField()
@@ -96,6 +97,8 @@ def next_sg_session(player: Player, subsession: Subsession):
 
 # PAGES
 class Info(Page):
+    form_model = 'player'
+    form_fields = ['table_goal']
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
         participant = player.participant

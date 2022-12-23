@@ -1,49 +1,89 @@
 {% block title %}
-    Info
 {% endblock %}
 {% block content %}
     <style>
         h1 {text-align: center}
+        h3 {text-align: right}
         td {text-align: center}
         tr {text-align: right}
         th {text-align: center}
+        li {text-align: left}
     </style>
     <h1> <i>Welcome!</i> </h1>
 
     <div class = "container-sm">
         <p class="text-start">
-            Your job for the next 50 minutes is to be count the number
-            of zeros that you see in the matrix <b><i>like the one you see below.</i></b><br>
-
-            There will be three stages:<br><br>
-            Stage 1:<br>
+            <b>Rules:</b>
             <ul>
-                <li>Duration: 10 min</li>
-                <li>Penalty:  $0.25</li>
-                <li>Default Goal: 1 table per minute or 10 tables</li>
+                <li>
+                    Your job for the next 50 minutes is to be count the number
+                    of zeros that you see in a 10x15 table <b><i>like the one you see below.</i></b>
+                </li>
+                <li>
+                    Before you start you have the option to set a goal for the number of
+                    responses you would think you can answer correctly within the time limit.
+                    <ul>
+                        <li>Simply hit the next button to not set a goal and the default
+                            will be set.
+                        </li>
+                        <li>
+                            Type your goal into the provided prompt to set a goal then press
+                            the enter key.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    If you meet your goal before the time limit is reached you will have the
+                    option to stop, or you can keep earning extra money!
+                </li>
+                <li>
+                    If you enter the correct amount of 0s in the
+                    box below the table you will receive a reward.<br>
+                </li>
+                <li>
+                    There will be three stages:<br>
+                    <table class = "table table-hover table-small table-bordered">
+                        <tr>
+                            <th class = "table-dark" colspan="3" scope = "colgroup">Stage</th>
+                        </tr>
+                        <tr>
+                            <th class = "table-primary" colspan="1" scope = "colgroup">1</th>
+                            <th class = "table-primary" colspan="1" scope = "colgroup">2</th>
+                            <th class = "table-primary" colspan="1" scope = "colgroup">3</th>
+                        </tr>
+                         <tr>
+                            <td class = "table-secondary">
+                                <ul>
+                                    <li class="text-info">Duration: 10 min</li>
+                                    <li class="text-danger">Penalty:  -$0.25</li>
+                                    <li class = "text-success">Reward: &nbsp;$0.25</li>
+                                    <li>Default Goal: 1 table <br>per minute or 10 tables</li>
+                                </ul>
+                            </td>
+                            <td class = "table-secondary">
+                                <ul>
+                                    <li class="text-primary">Duration: 20 min</li>
+                                    <li class="text-danger">Penalty:  -$0.25</li>
+                                    <li class = "text-success">Reward: &nbsp;$0.25</li>
+                                    <li>Default Goal: 1 table <br>per minute or 20 tables</li>
+                                </ul>
+                            </td>
+                            <td  class = "table-secondary">
+                                <ul>
+                                    <li class="text-primary">Duration: 20 min</li>
+                                    <li class="text-danger">Penalty:  -$0.25</li>
+                                    <li class = "text-success">Reward: &nbsp;$0.25</li>
+                                    <li>Default Goal: 1 table <br>per minute or 20 tables</li>
+                                </ul>
+                            </td>
+                          </tr>
+                </table>
+
+                </li>
             </ul>
 
-
-            If you enter the correct amount of 0s in the
-            box below the matrix you will be rewarded with <b><i>$0.25!</i></b><br>
-            Try to answer as many as possible!
+        <b>Try to answer as many as possible!<br></b>
         </p>
-        <table class = "table table-small">
-            <colgroup span="3"></colgroup>
-            <tr>
-                <td rowspan="3"></td>
-                <th class = "table-info" colspan="3" scope = "colgroup">Stage</th>
-                <th class = "table-info" colspan="1" scope = "colgroup">1</th>
-            </tr>
-             <tr>
-                <td>50,000</td>
-                <td>30,000</td>
-                <td>100,000</td>
-              </tr>
-        </table>
-        <h3 class = "text-dark">
-            You've earned {% player.payoff %} so far!
-        </h3>
         <table class = "table table-hover table-bordered table-sm">
             <thread>
                 <tr class = "table-info table-sm">
@@ -62,6 +102,9 @@
             </thread>
             <tbody id = "data_body"> </tbody>
         </table>
+        <h3 class = "text-dark">
+            You've earned {% player.payoff %} so far!
+        </h3>
         <script>
         function generateData() {
             const R = 15, C = 10, randomizer = Math.random()
@@ -108,6 +151,7 @@
             buildTable(generateData())
         </script>
 
+    {% formfields %}
     {% next_button %}
     </div>
 {% endblock %}
