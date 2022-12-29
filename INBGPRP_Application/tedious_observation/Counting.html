@@ -1,96 +1,233 @@
-{% extends "otree/Page.html" %}
-{% load otree static %}
-{% block title %}
+{{ extends "otree/Page.html" }}
+{{ load otree static }}
+{{ block title }}
     Start Counting!
-{% endblock %}
-{% block content %}
-   <h1>
-        Supergame {% subsession.sub_game %}, period {% subsession.period %}
-   </h1>
+{{ endblock }}
+{{ block content }}
    <style>
+       .otree-timer {
+           background-color: #FFFFFF;
+           color: black
+       }
+       .curveWrap {
+         opacity: 1;
+         width: 150vw;
+         height: 100vh;
+         position: absolute;
+         transform: translateX(-30vw) rotate(0deg);
+         will-change: transform;
+       }
+     .curveWrap .curve {
+         stroke-linecap: round;
+         stroke-opacity: 0;
+     }
+     .curveWrap .curve path {
+         transform-origin: center;
+     }
+     .curveWrap .curve path:nth-child(1) {
+         stroke-width: 33;
+         animation: curve 35s linear 1.6s infinite;
+    }
+     .curveWrap .curve path:nth-child(6n + 1) {
+         stroke: #EAAA00;
+    }
+     .curveWrap .curve path:nth-child(6n + 2) {
+         stroke: #005EB8;
+    }
+     .curveWrap .curve path:nth-child(6n + 3) {
+         stroke: #FDDA24;
+    }
+     .curveWrap .curve path:nth-child(6n + 4) {
+         stroke: #9BD3DD;
+    }
+     .curveWrap .curve path:nth-child(6n + 5) {
+         stroke: #0d5257;
+    }
+     .curveWrap .curve path:nth-child(6n + 6) {
+         stroke: #9f7d23;
+    }
+     .curveWrap .curve path:nth-child(2) {
+         stroke-width: 46;
+         animation: curve 35s linear 3.2s infinite;
+    }
+     .curveWrap .curve path:nth-child(6n + 1) {
+         stroke: #EAAA00;
+    }
+     .curveWrap .curve path:nth-child(6n + 2) {
+         stroke: #005EB8;
+    }
+     .curveWrap .curve path:nth-child(6n + 3) {
+         stroke: #FDDA24;
+    }
+     .curveWrap .curve path:nth-child(6n + 4) {
+         stroke: #9BD3DD;
+    }
+     .curveWrap .curve path:nth-child(6n + 5) {
+         stroke: #0d5257;
+    }
+     .curveWrap .curve path:nth-child(6n + 6) {
+         stroke: #9f7d23;
+    }
+     .curveWrap .curve path:nth-child(3) {
+         stroke-width: 18;
+         animation: curve 35s linear 4.8s infinite;
+    }
+     .curveWrap .curve path:nth-child(6n + 1) {
+         stroke: #EAAA00;
+    }
+     .curveWrap .curve path:nth-child(6n + 2) {
+         stroke: #005EB8;
+    }
+     .curveWrap .curve path:nth-child(6n + 3) {
+         stroke: #FDDA24;
+    }
+     .curveWrap .curve path:nth-child(6n + 4) {
+         stroke: #9BD3DD;
+    }
+     .curveWrap .curve path:nth-child(6n + 5) {
+         stroke: #0d5257;
+    }
+     .curveWrap .curve path:nth-child(6n + 6) {
+         stroke: #9f7d23;
+    }
+     .curveWrap .curve path:nth-child(4) {
+         stroke-width: 34;
+         animation: curve 35s linear 6.4s infinite;
+    }
+     .curveWrap .curve path:nth-child(6n + 1) {
+         stroke: #EAAA00;
+    }
+     .curveWrap .curve path:nth-child(6n + 2) {
+         stroke: #005EB8;
+    }
+     .curveWrap .curve path:nth-child(6n + 3) {
+         stroke: #FDDA24;
+    }
+     .curveWrap .curve path:nth-child(6n + 4) {
+         stroke: #9BD3DD;
+    }
+     .curveWrap .curve path:nth-child(6n + 5) {
+         stroke: #0d5257;
+    }
+     .curveWrap .curve path:nth-child(6n + 6) {
+         stroke: #9f7d23;
+    }
+     @keyframes curve {
+         50% {
+             transform: rotateX(360deg) scaley(1) skewY(8deg);
+             stroke-opacity: 1;
+        }
+    }
+     html, body {
+         height: fit-content;
+    }
+     body {
+         background: radial-gradient(#222, #000) no-repeat;
+         color: white
+     }
         h1 {text-align: center}
+        #info_block {
+            background-color: #2C2A29;
+            padding: 40px 150px 30px 100px;
+            position: relative;
+        }
         h2 {text-align: right}
         td {text-align: center}
         tr {text-align: right}
-   </style>
-    <div class="container-sm" >
-        <h2 id="feedback"></h2>
-        <table class = "table table-hover table-bordered table-sm">
-            <thread>
-                <tr class = "table-dark table-sm">
-                    <th class="col-sm-1" scope="col">#</th>
-                    <th class="border-3 col-sm-1" scope="col">1</th>
-                    <th class="border-3 col-sm-1" scope="col">2</th>
-                    <th class="border-3 col-sm-1" scope="col">3</th>
-                    <th class="border-3 col-sm-1" scope="col">4</th>
-                    <th class="border-3 col-sm-1" scope="col">5</th>
-                    <th class="border-3 col-sm-1" scope="col">6</th>
-                    <th class="border-3 col-sm-1" scope="col">7</th>
-                    <th class="border-3 col-sm-1" scope="col">8</th>
-                    <th class="border-3 col-sm-1" scope="col">9</th>
-                    <th class="border-3 col-sm-1" scope="col">10</th>
-                </tr>
-            </thread>
-            <tbody id = "data_body"> </tbody>
-        </table>
-        <script>
-            console.log("matrix: ", js_vars.matrix)
-            console.log("zeros: ", js_vars.zeros)
-            console.log("ones: ",js_vars.ones)
-            function extract_values(string_data){
-                let i = 0
-                let j = i + 10
-                let data = Array(15)
-                let row_data = '';
-                while (i < 150) {
-                   row_data = string_data.slice(i, j)
-                   data[i / 10] = Array(10).fill(0)
-                   for (let k = 0; k < row_data.length; k++) {
-                       data[i / 10][k] = ~~row_data[k]
-                   }
-                   i += 10
-                   j += 10
-               }
-               return data
-           }
-           function buildTable(matrix){
-                let table = document.getElementById('data_body')
+    </style>
 
-                for (let i = 0; i < 15; i++){
-                    let row = []
-                        row =`<tr>
-                                <th class = "table-bordered table-dark" scope="row">${i+1}</th>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][0]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][1]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][2]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][3]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][4]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][5]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][6]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][7]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][8]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][9]}</td>
-                              </tr>`
-                    table.innerHTML += row
-                }
-            }
-            let data = extract_values(js_vars.matrix)
-            let header = document.getElementById('feedback')
-            buildTable(data)
-            const correct = /.*Correct.*/
-            const incorrect = /.*Incorrect.*/
-            let feedback = js_vars.feedback
-            console.log("feedback: ", feedback)
-            console.log("feedback: ", feedback.match(correct) !== null)
-            if(feedback.match(correct)){
-                document.getElementById("feedback").classList.toggle('text-success')
-            }else if(feedback.match(incorrect)) {
-                document.getElementById("feedback").classList.toggle('text-danger')
-            }else {
-                document.getElementById("feedback").classList.toggle('text-info')
-            }
-            header.innerHTML += feedback
-        </script>
-        {% formfields %}
+    <div class="curveWrap">
+      <svg width="100%" height="100%" viewBox="0 0 1200 100" xmlns="http://www.w3.org/2000/svg">
+        <g class="curve" fill="none">
+          <!-- You can add more, fewer, and tweak paths... -->
+          <path d="M 0, 60 S 300, -60, 600, 60, 800, -120, 1200 60" />
+          <path d="M 0, 60 S 200, -60, 400, 60, 900, -120, 1200 60" />
+          <path d="M 0, 60 S 200, -70, 400, 70, 800, -120, 1200 60" />
+          <path d="M 0, 60 S 200, -60, 400, 80, 600, -120, 1200 60" />
+    <!--  <path d="M 0, 60 S 300, -60, 600, 60, 800, -120, 1200 60" /> -->
+        </g>
+      </svg>
     </div>
-{% endblock %}
+   <body>
+        <div id="info_block" class="container-sm" >
+            <h2 id="feedback"></h2>
+            <table class = "table table-hover table-bordered table-sm">
+                <thread>
+                    <tr class = "table-dark table-sm">
+                        <th class="col-sm-1" scope="col">#</th>
+                        <th class="border-3 col-sm-1" scope="col">1</th>
+                        <th class="border-3 col-sm-1" scope="col">2</th>
+                        <th class="border-3 col-sm-1" scope="col">3</th>
+                        <th class="border-3 col-sm-1" scope="col">4</th>
+                        <th class="border-3 col-sm-1" scope="col">5</th>
+                        <th class="border-3 col-sm-1" scope="col">6</th>
+                        <th class="border-3 col-sm-1" scope="col">7</th>
+                        <th class="border-3 col-sm-1" scope="col">8</th>
+                        <th class="border-3 col-sm-1" scope="col">9</th>
+                        <th class="border-3 col-sm-1" scope="col">10</th>
+                    </tr>
+                </thread>
+                <tbody id = "data_body"> </tbody>
+            </table>
+            {{ formfields }}
+        </div>
+   </body>
+   <script>
+        console.log("matrix: ", js_vars.matrix)
+        console.log("zeros: ", js_vars.zeros)
+        console.log("ones: ",js_vars.ones)
+        function extract_values(string_data){
+            let i = 0
+            let j = i + 10
+            let data = Array(15)
+            let row_data = '';
+            while (i < 150) {
+               row_data = string_data.slice(i, j)
+               data[i / 10] = Array(10).fill(0)
+               for (let k = 0; k < row_data.length; k++) {
+                   data[i / 10][k] = ~~row_data[k]
+               }
+               i += 10
+               j += 10
+           }
+           return data
+       }
+       function buildTable(matrix){
+            let table = document.getElementById('data_body')
+
+            for (let i = 0; i < 15; i++){
+                let row = []
+                    row =`<tr>
+                            <th class = "table-bordered table-dark" scope="row">${i+1}</th>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][0]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][1]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][2]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][3]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][4]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][5]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][6]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][7]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][8]}</td>
+                            <td class = "table-secondary table-bordered border-3">${matrix[i][9]}</td>
+                          </tr>`
+                table.innerHTML += row
+            }
+       }
+        let data = extract_values(js_vars.matrix)
+        let header = document.getElementById('feedback')
+        buildTable(data)
+        const correct = /.*Correct.*/
+        const incorrect = /.*Incorrect.*/
+        let feedback = js_vars.feedback
+        console.log("feedback: ", feedback)
+        console.log("feedback: ", feedback.match(correct) !== null)
+        if(feedback.match(correct)){
+            document.getElementById("feedback").classList.toggle('text-success')
+        }else if(feedback.match(incorrect)) {
+            document.getElementById("feedback").classList.toggle('text-danger')
+        }else {
+            document.getElementById("feedback").classList.toggle('text-info')
+        }
+        header.innerHTML += feedback
+    </script>
+{{ endblock }}

@@ -1,160 +1,294 @@
-{% block title %}
-{% endblock %}
-{% block content %}
+{{ block title }}
+{{ endblock }}
+{{ block content }}
     <style>
-        h1 {text-align: center}
-        h3 {text-align: right}
+    body {
+          --s: 100px; /* control the size */
+          --c2: #9F7D23;
+          --c1: #0D5257;
+
+          --_s: calc(2*var(--s)) calc(2*var(--s));
+          --_g: var(--_s) conic-gradient(at 40% 40%,#0000 75%,var(--c1) 0);
+          --_p: var(--_s) conic-gradient(at 20% 20%,#0000 75%,var(--c2) 0);
+          background:
+            calc( .9*var(--s)) calc( .9*var(--s))/var(--_p),
+            calc(-.1*var(--s)) calc(-.1*var(--s))/var(--_p),
+            calc( .7*var(--s)) calc( .7*var(--s))/var(--_g),
+            calc(-.3*var(--s)) calc(-.3*var(--s))/var(--_g),
+            conic-gradient(from 90deg at 20% 20%,var(--c2) 25%,var(--c1) 0)
+             0 0/var(--s) var(--s);
+          animation: m 20s infinite;
+        }
+        @keyframes m {
+          0% {
+           background-position:
+            calc( .9*var(--s)) calc( .9*var(--s)),
+            calc(-.1*var(--s)) calc(-.1*var(--s)),
+            calc( .7*var(--s)) calc( .7*var(--s)),
+            calc(-.3*var(--s)) calc(-.3*var(--s)),0 0
+          }
+          25% {
+           background-position:
+            calc(1.9*var(--s)) calc( .9*var(--s)),
+            calc(-1.1*var(--s)) calc(-.1*var(--s)),
+            calc(1.7*var(--s)) calc( .7*var(--s)),
+            calc(-1.3*var(--s)) calc(-.3*var(--s)),0 0
+          }
+          50% {
+           background-position:
+            calc(1.9*var(--s)) calc(-.1*var(--s)),
+            calc(-1.1*var(--s)) calc( .9*var(--s)),
+            calc(1.7*var(--s)) calc(-.3*var(--s)),
+            calc(-1.3*var(--s)) calc( .7*var(--s)),0 0
+          }
+          75% {
+           background-position:
+            calc(2.9*var(--s)) calc(-.1*var(--s)),
+            calc(-2.1*var(--s)) calc( .9*var(--s)),
+            calc(2.7*var(--s)) calc(-.3*var(--s)),
+            calc(-2.3*var(--s)) calc( .7*var(--s)),0 0
+          }
+          100% {
+           background-position:
+            calc(2.9*var(--s)) calc(-1.1*var(--s)),
+            calc(-2.1*var(--s)) calc(1.9*var(--s)),
+            calc(2.7*var(--s)) calc(-1.3*var(--s)),
+            calc(-2.3*var(--s)) calc(1.7*var(--s)),0 0
+          }
+    }
+
+        h1 { text-align: center }
+        h2 { text-align: center }
+        body { color: #ffffff }
         td {text-align: center}
         tr {text-align: right}
         th {text-align: center}
         li {text-align: left}
+        #info_block {
+            background-color: #2C2A29;
+            padding: 40px 150px 30px 100px;
+            position: relative;
+        }
+        #info {
+            padding-left: 30px;
+            padding-right: 150px;
+            padding-bottom: 20px;
+        }
+        #exp_table {
+            opacity: 1;
+            transition-duration: 5s;
+            transition-property: opacity;
+        }
+        #exp_table.fade_in{
+            opacity: 0;
+        }
+        #info_table{
+            opacity: 1;
+            transition-duration: 20s;
+            transition-property: opacity;
+        }
+        #info_table.fade_in{
+            opacity: 0;
+        }
+        #comp_number{
+            opacity: 1;
+            transition-duration: 60s;
+            transition-property: opacity;
+        }
+        #comp_number.fade_in{
+            opacity: 0;
+        }
+        C.COMP_NUM {align-content: end}
     </style>
-    <h1> <i>Welcome!</i> </h1>
 
-    <div class = "container-sm">
-        <p class="text-start">
+    <body>
+        <div id="info_block" class = "container-sm">
+            <h1> <i><text id="stage_num"></text></i> </h1>
+            <h2>You've earned <b> {{ participant.payoff}} </b> so far!</h2>
             <b>Rules:</b>
-            <ul>
-                <li>
-                    Your job for the next 50 minutes is to be count the number
-                    of zeros that you see in a 10x15 table <b><i>like the one you see below.</i></b>
-                </li>
-                <li>
-                    Before you start you have the option to set a goal for the number of
-                    responses you would think you can answer correctly within the time limit.
-                    <ul>
-                        <li>Simply hit the next button to not set a goal and the default
-                            will be set.
-                        </li>
-                        <li>
-                            Type your goal into the provided prompt to set a goal then press
-                            the enter key.
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    If you meet your goal before the time limit is reached you will have the
-                    option to stop, or you can keep earning extra money!
-                </li>
-                <li>
-                    If you enter the correct amount of 0s in the
-                    box below the table you will receive a reward.<br>
-                </li>
-                <li>
-                    There will be three stages:<br>
-                    <table class = "table table-hover table-small table-bordered">
-                        <tr>
-                            <th class = "table-dark" colspan="3" scope = "colgroup">Stage</th>
-                        </tr>
-                        <tr>
-                            <th class = "table-primary" colspan="1" scope = "colgroup">1</th>
-                            <th class = "table-primary" colspan="1" scope = "colgroup">2</th>
-                            <th class = "table-primary" colspan="1" scope = "colgroup">3</th>
-                        </tr>
-                         <tr>
-                            <td class = "table-secondary">
-                                <ul>
-                                    <li class="text-info">Duration: 10 min</li>
-                                    <li class="text-danger">Penalty:  -$0.25</li>
-                                    <li class = "text-success">Reward: &nbsp;$0.25</li>
-                                    <li>Default Goal: 1 table <br>per minute or 10 tables</li>
-                                </ul>
-                            </td>
-                            <td class = "table-secondary">
-                                <ul>
-                                    <li class="text-primary">Duration: 20 min</li>
-                                    <li class="text-danger">Penalty:  -$0.25</li>
-                                    <li class = "text-success">Reward: &nbsp;$0.25</li>
-                                    <li>Default Goal: 1 table <br>per minute or 20 tables</li>
-                                </ul>
-                            </td>
-                            <td  class = "table-secondary">
-                                <ul>
-                                    <li class="text-primary">Duration: 20 min</li>
-                                    <li class="text-danger">Penalty:  -$0.25</li>
-                                    <li class = "text-success">Reward: &nbsp;$0.25</li>
-                                    <li>Default Goal: 1 table <br>per minute or 20 tables</li>
-                                </ul>
-                            </td>
-                          </tr>
-                </table>
+            <p id="info" class="text-start">
+                <ul>
+                    <li>
+                        Your job for the next 50 minutes is to be count the number
+                        of zeros that you see in a 10x15 table <b><i>like the one you see below.</i></b>
+                        <ul>
+                            <li>
+                                <table id = "exp_table" class = "table table-hover table-bordered table-sm">
+                                    <thread>
+                                        <tr class = "table-info table-sm">
+                                            <th class="col-sm-1" scope="col">#</th>
+                                            <th class="border-3 col-sm-1" scope="col">1</th>
+                                            <th class="border-3 col-sm-1" scope="col">2</th>
+                                            <th class="border-3 col-sm-1" scope="col">3</th>
+                                            <th class="border-3 col-sm-1" scope="col">4</th>
+                                            <th class="border-3 col-sm-1" scope="col">5</th>
+                                            <th class="border-3 col-sm-1" scope="col">6</th>
+                                            <th class="border-3 col-sm-1" scope="col">7</th>
+                                            <th class="border-3 col-sm-1" scope="col">8</th>
+                                            <th class="border-3 col-sm-1" scope="col">9</th>
+                                            <th class="border-3 col-sm-1" scope="col">10</th>
+                                        </tr>
+                                    </thread>
+                                    <tbody id = "data_body"> </tbody>
+                                    <script>
+                                        document.getElementById("exp_table").classList.toggle('fade_in')
+                                    </script>
+                                </table>
 
-                </li>
-            </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        Before you start you have the option to set a goal for the number of
+                        responses you would think you can answer correctly within the time limit.
+                        <ul>
+                            <li>Simply hit the next button to not set a goal and the default
+                                will be set.
+                            </li>
+                            <li>
+                                Type your goal into the provided prompt to set a goal then press
+                                the enter key.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        If you meet your goal before the time limit is reached you will have the
+                        option to stop, or you can keep earning extra money!
+                    </li>
+                    <li>
+                        If you enter the correct amount of 0s in the
+                        box below the table you will receive a reward.<br>
+                    </li>
+                    <li>
+                        There will be three stages:<br>
+                        <table id="info_table" class = "table table-hover table-small table-bordered">
+                            <tr>
+                                <th class = "table-dark" colspan="3" scope = "colgroup">Stage</th>
+                            </tr>
+                            <tr>
+                                <th class = "table-primary" colspan="1" scope = "colgroup">Practice</th>
+                                <th class = "table-primary" colspan="1" scope = "colgroup">1</th>
+                                <th class = "table-primary" colspan="1" scope = "colgroup">2</th>
+                            </tr>
+                             <tr>
+                                <td class = "table-secondary">
+                                    <ul>
+                                        <li class="text-info">Duration: 10 min</li>
+                                        <li class="text-danger">Penalty:  -$0.25</li>
+                                        <li class = "text-success">Reward: &nbsp;$0.25</li>
+                                        <li>Default Goal: 1 table <br>per minute or 10 tables</li>
+                                    </ul>
+                                </td>
+                                <td class = "table-secondary">
+                                    <ul>
+                                        <li class="text-primary">Duration: 20 min</li>
+                                        <li class="text-danger">Penalty:  -$0.25</li>
+                                        <li class = "text-success">Reward: &nbsp;$0.25</li>
+                                        <li>Default Goal: 1 table <br>per minute or 20 tables</li>
+                                    </ul>
+                                </td>
+                                <td  class = "table-secondary">
+                                    <ul>
+                                        <li class="text-primary">Duration: 20 min</li>
+                                        <li class="text-danger">Penalty:  -$0.25</li>
+                                        <li class = "text-success">Reward: &nbsp;$0.25</li>
+                                        <li>Default Goal: 1 table <br>per minute or 20 tables</li>
+                                    </ul>
+                                </td>
+                              </tr>
+                           <script>
+                               document.getElementById("info_table").classList.toggle('fade_in')
+                           </script>
+                    </table>
+                    </li>
+                </ul>
+            </p>
 
-        <b>Try to answer as many as possible!<br></b>
-        </p>
-        <table class = "table table-hover table-bordered table-sm">
-            <thread>
-                <tr class = "table-info table-sm">
-                    <th class="col-sm-1" scope="col">#</th>
-                    <th class="border-3 col-sm-1" scope="col">1</th>
-                    <th class="border-3 col-sm-1" scope="col">2</th>
-                    <th class="border-3 col-sm-1" scope="col">3</th>
-                    <th class="border-3 col-sm-1" scope="col">4</th>
-                    <th class="border-3 col-sm-1" scope="col">5</th>
-                    <th class="border-3 col-sm-1" scope="col">6</th>
-                    <th class="border-3 col-sm-1" scope="col">7</th>
-                    <th class="border-3 col-sm-1" scope="col">8</th>
-                    <th class="border-3 col-sm-1" scope="col">9</th>
-                    <th class="border-3 col-sm-1" scope="col">10</th>
-                </tr>
-            </thread>
-            <tbody id = "data_body"> </tbody>
-        </table>
-        <h3 class = "text-dark">
-            You've earned {% player.payoff %} so far!
-        </h3>
+            To confirm that you have read and understand the instruction please enter
+            <text id = "comp_number"> <b> {{ C.COMP_NUMBER }} </b> </text> in the box provided below.
+            <script>
+                document.getElementById("comp_number").classList.toggle('fade_in')
+            </script>
+            {{ formfield 'comprehension_input'}}
+
+            {{ formfield 'table_goal' }}
+            {{ next_button }}
+        </div>
         <script>
-        function generateData() {
-            const R = 15, C = 10, randomizer = Math.random()
-            let zeros = 0, ones = 0
-            var data = Array(R)
-            for (var i = 0; i < R; i++) {
-                data[i] = Array(C).fill(0)
-                for (var j = 0; j < C; j++) {
-                    if (Math.random() < randomizer) {
-                        data[i][j] = 0
-                        zeros++
-                    } else {
-                        data[i][j] = 1
-                        ones++
+            // Displays the correct stage value.
+            switch(~~`{{ subsession.stage }}`){
+                case 1:
+                    document.getElementById("stage_num").innerHTML += "Practice Stage"
+                    break
+                case 2:
+                    document.getElementById("stage_num").innerHTML += "Stage 1"
+                    break
+                case 3:
+                    document.getElementById("stage_num").innerHTML += "Stage 2"
+                    break
+                default:
+                    console.log("Problem in switch case... Start of script in info.html. ")
+                    break
+            }
+
+            // Generates the 10x15 table's values
+            function generateData() {
+                const R = 15, C = 10, randomizer = Math.random()
+                let zeros = 0, ones = 0
+                let data = Array(R)
+                for (let i = 0; i < R; i++) {
+                    data[i] = Array(C).fill(0)
+                    for (let j = 0; j < C; j++) {
+                        if (Math.random() < randomizer) {
+                            data[i][j] = 0
+                            zeros++
+                        } else {
+                            data[i][j] = 1
+                            ones++
+                        }
                     }
                 }
+                console.log("Zeros: %s", zeros)
+                console.log("Ones: %s", ones)
+
+                return data
             }
-            console.log("Zeros: %s", zeros)
-            console.log("Ones: %s", ones)
+            //Inserts the values into the html table object
+            function buildTable(matrix){
+                    let table = document.getElementById('data_body')
 
-            return data
-        }
-        function buildTable(matrix){
-                let table = document.getElementById('data_body')
-
-                for (let i = 0; i < 15; i++){
-                    let row = []
-                        row =`<tr>
-                                <th class = "border-3 table-bordered table-info table-hover" scope="row">${i+1}</th>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][0]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][1]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][2]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][3]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][4]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][5]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][6]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][7]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][8]}</td>
-                                <td class = "table-secondary table-bordered border-3">${matrix[i][9]}</td>
-                              </tr>`
-                    table.innerHTML += row
+                    for (let i = 0; i < 15; i++){
+                        let row = []
+                            row =`<tr>
+                                    <th class = "border-3 table-bordered table-info table-hover" scope="row">${i+1}</th>
+                                    <td class = "table-secondary table-bordered border-3">${matrix[i][0]}</td>
+                                    <td class = "table-secondary table-bordered border-3">${matrix[i][1]}</td>
+                                    <td class = "table-secondary table-bordered border-3">${matrix[i][2]}</td>
+                                    <td class = "table-secondary table-bordered border-3">${matrix[i][3]}</td>
+                                    <td class = "table-secondary table-bordered border-3">${matrix[i][4]}</td>
+                                    <td class = "table-secondary table-bordered border-3">${matrix[i][5]}</td>
+                                    <td class = "table-secondary table-bordered border-3">${matrix[i][6]}</td>
+                                    <td class = "table-secondary table-bordered border-3">${matrix[i][7]}</td>
+                                    <td class = "table-secondary table-bordered border-3">${matrix[i][8]}</td>
+                                    <td class = "table-secondary table-bordered border-3">${matrix[i][9]}</td>
+                                  </tr>`
+                        table.innerHTML += row
+                    }
                 }
-            }
             buildTable(generateData())
         </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", ()=> {
+                window.setTimeout(function () {
+                    document.getElementById("exp_table").classList.toggle('fade_in')
+                    document.getElementById("info_table").classList.toggle('fade_in')
+                    document.getElementById("comp_number").classList.toggle('fade_in')
+                }, 230)
+            })
+        </script>
+    </body>
 
-    {% formfields %}
-    {% next_button %}
-    </div>
-{% endblock %}
+{{ endblock }}
 
-{% block global_scripts  %}
-{% endblock %}
+{{ block global_scripts  }}
+{{ endblock }}
