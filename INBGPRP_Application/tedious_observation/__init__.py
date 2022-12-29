@@ -110,7 +110,7 @@ class Info(Page):
     form_fields = ['table_goal', 'comprehension_input']
 
     @staticmethod
-    def offer_error_message(player: Player, values):
+    def error_message(player: Player, values):
         if values['comprehension_input'] != C.COMP_NUMBER:
             return 'The comprehension number must match the value provided!'
 
@@ -144,6 +144,7 @@ class Counting(Page):
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
+        # TODO change display to participant.payoff and remove logic to look at previous player rounds.
         print(f'zeros_actual: {player.zeros_actual}, zero_g: {player.zeros_guess}')
         if player.subsession.round == 1:
             if player.zeros_guess == player.zeros_actual:
