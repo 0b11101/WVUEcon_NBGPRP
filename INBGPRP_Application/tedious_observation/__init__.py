@@ -118,7 +118,7 @@ class Info(Page):
     def before_next_page(player: Player, timeout_happened):
         participant = player.participant
         if player.subsession.stage == 1:
-            participant.expiry = time.time() + 60
+            participant.expiry = time.time() + 60 * 10
         else:
             participant.expiry = time.time() + 60 * 20
 
