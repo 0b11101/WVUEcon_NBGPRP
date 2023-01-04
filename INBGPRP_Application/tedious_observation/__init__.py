@@ -118,7 +118,7 @@ class Info(Page):
     def before_next_page(player: Player, timeout_happened):
         participant = player.participant
         if player.subsession.stage == 1:
-            participant.expiry = time.time() + 60 * 10
+            participant.expiry = time.time() + 60 * 10   # TODO change back to 60 * 10
         else:
             participant.expiry = time.time() + 60 * 20
 
@@ -149,23 +149,19 @@ class Counting(Page):
         if player.subsession.round == 1:
             if player.zeros_guess == player.zeros_actual:
                 player.payoff += C.PAYOUT
-                player.feedback = f'Correct: {player.zeros_guess} = {player.zeros_actual} ' \
-                                  f'Total earned: {player.payoff}'
+                player.feedback = f'Correct: {player.zeros_guess} = {player.zeros_actual} '
             else:
-                player.feedback = f'Incorrect: {player.zeros_guess} ≠ {player.zeros_actual} ' \
-                                  f'Total earned: {player.payoff}'
+                player.feedback = f'Incorrect: {player.zeros_guess} ≠ {player.zeros_actual} '
         else:
             prev_player = player.in_round(player.round_number - 1)
             if player.zeros_guess == player.zeros_actual:
                 print(prev_player.payoff)
                 player.payoff += prev_player.payoff + C.PAYOUT
-                player.feedback = f'Correct: {player.zeros_guess} = {player.zeros_actual} ' \
-                                  f'Total earned: {player.payoff}'
+                player.feedback = f'Correct: {player.zeros_guess} = {player.zeros_actual} '
                 print(player.field_maybe_none('feedback'))
             else:
                 player.payoff += prev_player.payoff
-                player.feedback = f'Incorrect: {player.zeros_guess} ≠ {player.zeros_actual} ' \
-                                  f'Total earned: {player.payoff}'
+                player.feedback = f'Incorrect: {player.zeros_guess} ≠ {player.zeros_actual} '
 
     @staticmethod
     def js_vars(player):

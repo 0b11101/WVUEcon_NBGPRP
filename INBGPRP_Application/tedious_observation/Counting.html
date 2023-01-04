@@ -4,8 +4,22 @@
     Start Counting!
 {{ endblock }}
 {{ block content }}
+
     <!-- CSS -->
     <style>
+        /* !! Basic css*/
+        html, body {
+          height: fit-content;
+        }
+        body {
+            background: radial-gradient(#222, #000) no-repeat;
+            color: white;
+
+        }
+        h1 {text-align: center}
+        h2 {text-align: center}
+        td {text-align: center}
+        tr {text-align: right}
 
         /*  !! otree changes */
         .otree-timer {display: None}
@@ -147,8 +161,8 @@
             height: inherit;
 
             /* Keep the label aligned to the top */
-            top: 20%;
-            left: 15%;
+            top: 23%;
+            left: 12%;
 
             /* Create a flexible box that centers content vertically and horizontally */
             display: flex;
@@ -156,23 +170,50 @@
             justify-content: end;
 
             /* Sort of an arbitrary number; adjust to your liking */
-            font-size: 40px;
+            font-size: 35px;
         }
 
-        /* !! Basic css*/
-        html, body {
-          height: fit-content;
-        }
-        body {
-          background: radial-gradient(#222, #000) no-repeat;
-          color: white
-        }
-        h1 {text-align: center}
-        h2 {text-align: right}
-        td {text-align: center}
-        tr {text-align: right}
+        .base-timer__path-remaining {
+              /* Just as thick as the original ring */
+              stroke-width: 7px;
 
-        /* Custom divs */
+              /* Rounds the line endings to create a seamless circle */
+              stroke-linecap: round;
+
+              /* Makes sure the animation starts at the top of the circle */
+              transform: rotate(90deg);
+              transform-origin: center;
+
+              /* One second aligns with the speed of the countdown timer */
+              transition: 1s linear all;
+
+              /* Allows the ring to change color when the color value updates */
+            }
+            .base-timer__path-remaining.green {
+              stroke: #00f21c;
+            }
+            .base-timer__path-remaining.lime {
+                stroke: #9bf200;
+            }
+
+            .base-timer__path-remaining.orange {
+              stroke: #e8f200;
+            }
+            .base-timer__path-remaining.sunset{
+                stroke: #fec401;
+            }
+            .base-timer__path-remaining.pink-lemonade {
+              stroke: #e94f01;
+            }
+            .base-timer__path-remaining.cherry{
+                stroke: #da0001
+            }
+        .base-timer__svg {
+          /* Flips the svg and makes the animation to move left-to-right */
+          transform: scaleX(-1);
+        }
+
+        /* !! Custom divs */
         #game {
             background-color: #2C2A29;
             position: relative;
@@ -226,27 +267,22 @@
                     </table>
                 </div>
                 <div id="game-info" class="col-4">
+                    <div  class="row row-cols">
+                        <h1>Earned: {{participant.payoff}}</h1>
+                    </div>
+                    <div  class="row row-cols">
+                        <h2 id="feedback"></h2>
+                    </div>
                     <div class="row row-cols-2">
-                        <div class="col-6"> <h2 id="feedback"></h2> </div>
 
                         <!-- Timer -->
                         <div class="col-6">
-                            <div class="base-timer">
-                                <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                                    <g class="base-timer__circle">
-                                        <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45" />
-                                    </g>
-                                </svg>
-                                <span id="base-timer-label" class="base-timer__label">
-                                    <span id="min-left"></span> : <span id="secs-left"></span>
-                                </span>
-                            </div>
-
+                            <span id="circle-timer"></span>
                         </div>
-                    </div>
-                    <div id="bot_container2" class="row row-cols-2">
-                        <div class="col-6"> {{ formfields }} </div>
                         <div class="col-6">Progress</div>
+                    </div>
+                    <div id="bot_container2" class="row row-col">
+                        <div class="col"> {{ formfields }} </div>
                     </div>
                 </div>
             </div>
@@ -298,11 +334,14 @@
          let data = extract_values(js_vars.matrix)
          let header = document.getElementById('feedback')
          buildTable(data)
+    </script>
+
+    <!-- Feedback -->
+    <script>
          const correct = /.*Correct.*/
          const incorrect = /.*Incorrect.*/
          let feedback = js_vars.feedback
-         console.log("feedback: ", feedback)
-         console.log("feedback: ", feedback.match(correct) !== null)
+
          if(feedback.match(correct)){
              document.getElementById("feedback").classList.toggle('text-success')
          }else if(feedback.match(incorrect)) {
@@ -315,11 +354,81 @@
 
     <!--Timer scripts-->
     <script>
+        let time_limit = 60; // TODO Change back to 60
+        switch(~~`{{ subsession.stage }}`) {
+            case 1:
+                time_limit *= 10 // TODO Change back to 10
+                break
+            case 2:
+                time_limit *= 20
+                break
+            case 3:
+                time_limit *= 20
+                break
+            default:
+                console.log("Problem in switch case... In counting.html. ")
+                break
+        }
+        const INFO2_THRESHOLD = time_limit*(5/6);
+        const WARNING_THRESHOLD = time_limit*(4/6);
+        const WARNING2_THRESHOLD = time_limit*(3/6);
+        const ALERT_THRESHOLD = time_limit*(2/6);
+        const ALERT2_THRESHOLD = time_limit*(1/6);
+        const FULL_CIRCLE = 283 //2 * pi * 45
+        const COLOR_CODES = {
+            info: { color: "green" },
+            info2: {
+                color: "lime",
+                threshold: INFO2_THRESHOLD,
+            },
+            warning: {
+                color: "orange",
+                threshold: WARNING_THRESHOLD,
+            },
+            warning2: {
+                color: "sunset",
+                threshold: WARNING2_THRESHOLD,
+            },
+            alert: {
+                color: "pink-lemonade",
+                threshold: ALERT_THRESHOLD,
+            },
+            alert2: {
+                color: "cherry",
+                threshold: ALERT2_THRESHOLD,
+            }
+        };
+        let remainingPathColor = COLOR_CODES.info.color;
+
+        document.getElementById("circle-timer").innerHTML =
+            `<div class="base-timer">
+                <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg">
+                    <g class="base-timer__circle">
+                        <circle class="base-timer__path-elapsed" cx="50" cy="50" r="45" /></circle>
+                        <path
+                            id="base-timer-path-remaining"
+                            stroke-dasharray="283"
+                            class="base-timer__path-remaining ${remainingPathColor}"
+                            d="
+                              M 50, 50
+                              m -45, 0
+                              a 45,45 0 1,0 90,0
+                              a 45,45 0 1,0 -90,0
+                            "
+                            stroke=" ${remainingPathColor}"
+                          >
+                        </path>
+                    </g>
+                </svg>
+                <span id="base-timer-label" class="base-timer__label">
+                    <span id="min-left"></span> : <span id="secs-left"></span>
+                </span>
+            </div>`;
         const zeroPad = (num, places) => String(num).padStart(places, '0')
         let minutes = document.getElementById('min-left');
         document.addEventListener("DOMContentLoaded", function (event) {
             $('.otree-timer__time-left').on('update.countdown', function (event) {
-                minutes.innerText = event.offset.totalMinutes;
+                minutes.innerText = zeroPad(event.offset.totalMinutes,2);
             });
         });
         let seconds = document.getElementById('secs-left');
@@ -329,5 +438,52 @@
             });
         });
 
+        document.addEventListener("DOMContentLoaded", function (event) {
+            $('.otree-timer__time-left').on('update.countdown', function (event) {
+                let timeLeft = event.offset.totalSeconds;
+                const circle_fraction = () => {return ((timeLeft/time_limit) * FULL_CIRCLE).toFixed(0)}
+                const circle_dashArray = `${(circle_fraction())} ${FULL_CIRCLE}`;
+                document.getElementById("base-timer-path-remaining").setAttribute("stroke-dasharray", circle_dashArray)
+
+                const {alert, alert2, warning, warning2, info, info2} = COLOR_CODES
+                if(timeLeft <= alert2.threshold){
+                    document
+                        .getElementById("base-timer-path-remaining")
+                        .classList.remove(alert.color)
+                    document
+                        .getElementById("base-timer-path-remaining")
+                        .classList.add(alert2.color)
+                } else if (timeLeft <= alert.threshold){
+                    document
+                       .getElementById("base-timer-path-remaining")
+                       .classList.remove(warning2.color)
+                    document
+                        .getElementById("base-timer-path-remaining")
+                        .classList.add(alert.color)
+                } else if (timeLeft <= warning2.threshold){
+                    document
+                       .getElementById("base-timer-path-remaining")
+                       .classList.remove(warning.color)
+                    document
+                        .getElementById("base-timer-path-remaining")
+                        .classList.add(warning2.color)
+                } else if(timeLeft <= warning.threshold){
+                    document
+                       .getElementById("base-timer-path-remaining")
+                       .classList.remove(info2.color)
+                    document
+                        .getElementById("base-timer-path-remaining")
+                        .classList.add(warning.color)
+                } else if(timeLeft <= info2.threshold){
+                     document
+                       .getElementById("base-timer-path-remaining")
+                       .classList.remove(info.color)
+                    document
+                        .getElementById("base-timer-path-remaining")
+                        .classList.add(info2.color)
+                }
+
+            });
+        });
     </script>
 {{ endblock }}
