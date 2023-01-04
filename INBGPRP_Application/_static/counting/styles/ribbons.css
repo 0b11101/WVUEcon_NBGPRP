@@ -1,4 +1,8 @@
 /* !! ribbons */
+body {
+    background: radial-gradient(#222, #000) no-repeat;
+    color: white;
+}
 .curveWrap {
   opacity: 1;
   width: 150vw;
