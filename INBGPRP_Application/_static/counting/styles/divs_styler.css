@@ -1,0 +1,19 @@
+/* !! Custom divs */
+#game {
+    background-color: #2C2A29;
+    position: relative;
+    width: 100%;
+    padding: 8%;
+    margin-top: 5%;
+
+}
+#game-table{
+    margin: -10%;
+}
+#game-info{
+    margin-top: -5%;
+}
+#circle-titles{
+    font-size: 125%;
+    text-align: left;
+}

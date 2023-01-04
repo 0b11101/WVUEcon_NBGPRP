@@ -41,7 +41,7 @@ class Player(BasePlayer):
     feedback = models.StringField(initial="You\'ll see feedback here")
 
     # Player input
-    table_goal = models.IntegerField(blank=True, intitial=10, label="Table Goal (Optional)")
+    table_goal = models.IntegerField(intitial=10, label="Table Goal (Optional)", blank=True)
     comprehension_input = models.IntegerField()
     zeros_guess = models.IntegerField(min=0, label="Input the amount of zeros here")
 
@@ -84,8 +84,6 @@ def matrix_creation(player: Player) -> [str, int, int]:
 
     player.zeros_actual = zeros
     player.ones = ones
-    print()
-    print(zeros)
     return [matrix, zeros, ones]
 
 
@@ -108,7 +106,6 @@ def next_sg_session(player: Player, subsession: Subsession):
 class Info(Page):
     form_model = 'player'
     form_fields = ['table_goal', 'comprehension_input']
-
     @staticmethod
     def error_message(player: Player, values):
         if values['comprehension_input'] != C.COMP_NUMBER:
@@ -117,13 +114,20 @@ class Info(Page):
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
         participant = player.participant
+        participant.table_goal = player.field_maybe_none('table_goal')
         if player.subsession.stage == 1:
             participant.expiry = time.time() + 60 * 10   # TODO change back to 60 * 10
+            if participant.table_goal is None:
+                participant.table_goal = 10;
         else:
             participant.expiry = time.time() + 60 * 20
+            if participant.table_goal is None:
+                participant.table_goal = 20;
 
         if timeout_happened:
             next_sg_session(player)
+
+        print("table_goal {0}".format(participant.table_goal))
 
     @staticmethod
     def is_displayed(player: Player):
@@ -133,7 +137,7 @@ class Info(Page):
 
 class Counting(Page):
     form_model = 'player'
-    form_fields = ['zeros_guess']
+    form_fields = ['zeros_guess', 'table_goal']
 
     display_timer = display_timer
     get_timeout_seconds = get_timeout_seconds
@@ -146,22 +150,11 @@ class Counting(Page):
     def before_next_page(player: Player, timeout_happened):
         # TODO change display to participant.payoff and remove logic to look at previous player rounds.
         print(f'zeros_actual: {player.zeros_actual}, zero_g: {player.zeros_guess}')
-        if player.subsession.round == 1:
-            if player.zeros_guess == player.zeros_actual:
-                player.payoff += C.PAYOUT
-                player.feedback = f'Correct: {player.zeros_guess} = {player.zeros_actual} '
-            else:
-                player.feedback = f'Incorrect: {player.zeros_guess} ≠ {player.zeros_actual} '
+        if player.zeros_guess == player.zeros_actual:
+            player.payoff += C.PAYOUT
+            player.feedback = f'Correct: {player.zeros_guess} = {player.zeros_actual} '
         else:
-            prev_player = player.in_round(player.round_number - 1)
-            if player.zeros_guess == player.zeros_actual:
-                print(prev_player.payoff)
-                player.payoff += prev_player.payoff + C.PAYOUT
-                player.feedback = f'Correct: {player.zeros_guess} = {player.zeros_actual} '
-                print(player.field_maybe_none('feedback'))
-            else:
-                player.payoff += prev_player.payoff
-                player.feedback = f'Incorrect: {player.zeros_guess} ≠ {player.zeros_actual} '
+            player.feedback = f'Incorrect: {player.zeros_guess} ≠ {player.zeros_actual} '
 
     @staticmethod
     def js_vars(player):

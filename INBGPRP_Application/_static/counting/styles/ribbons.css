@@ -1,0 +1,110 @@
+/* !! ribbons */
+.curveWrap {
+  opacity: 1;
+  width: 150vw;
+  height: 100vh;
+  position: absolute;
+  transform: translateX(-30vw) rotate(0deg);
+  will-change: transform;
+}
+  .curveWrap .curve {
+      stroke-linecap: round;
+      stroke-opacity: 0;
+  }
+      .curveWrap .curve path {
+      transform-origin: center;
+      }
+      .curveWrap .curve path:nth-child(1) {
+          stroke-width: 33;
+          animation: curve 35s linear 1.6s infinite;
+      }
+       .curveWrap .curve path:nth-child(6n + 1) {
+           stroke: #EAAA00;
+      }
+       .curveWrap .curve path:nth-child(6n + 2) {
+           stroke: #005EB8;
+      }
+       .curveWrap .curve path:nth-child(6n + 3) {
+           stroke: #FDDA24;
+      }
+       .curveWrap .curve path:nth-child(6n + 4) {
+           stroke: #9BD3DD;
+      }
+       .curveWrap .curve path:nth-child(6n + 5) {
+           stroke: #0d5257;
+      }
+       .curveWrap .curve path:nth-child(6n + 6) {
+           stroke: #9f7d23;
+      }
+       .curveWrap .curve path:nth-child(2) {
+           stroke-width: 46;
+           animation: curve 35s linear 3.2s infinite;
+      }
+       .curveWrap .curve path:nth-child(6n + 1) {
+           stroke: #EAAA00;
+      }
+       .curveWrap .curve path:nth-child(6n + 2) {
+           stroke: #005EB8;
+      }
+       .curveWrap .curve path:nth-child(6n + 3) {
+           stroke: #FDDA24;
+      }
+       .curveWrap .curve path:nth-child(6n + 4) {
+           stroke: #9BD3DD;
+      }
+       .curveWrap .curve path:nth-child(6n + 5) {
+           stroke: #0d5257;
+      }
+       .curveWrap .curve path:nth-child(6n + 6) {
+           stroke: #9f7d23;
+      }
+       .curveWrap .curve path:nth-child(3) {
+           stroke-width: 18;
+           animation: curve 35s linear 4.8s infinite;
+      }
+       .curveWrap .curve path:nth-child(6n + 1) {
+           stroke: #EAAA00;
+      }
+       .curveWrap .curve path:nth-child(6n + 2) {
+           stroke: #005EB8;
+      }
+       .curveWrap .curve path:nth-child(6n + 3) {
+           stroke: #FDDA24;
+      }
+       .curveWrap .curve path:nth-child(6n + 4) {
+           stroke: #9BD3DD;
+      }
+       .curveWrap .curve path:nth-child(6n + 5) {
+           stroke: #0d5257;
+      }
+       .curveWrap .curve path:nth-child(6n + 6) {
+           stroke: #9f7d23;
+      }
+       .curveWrap .curve path:nth-child(4) {
+           stroke-width: 34;
+           animation: curve 35s linear 6.4s infinite;
+      }
+       .curveWrap .curve path:nth-child(6n + 1) {
+           stroke: #EAAA00;
+      }
+       .curveWrap .curve path:nth-child(6n + 2) {
+           stroke: #005EB8;
+      }
+       .curveWrap .curve path:nth-child(6n + 3) {
+           stroke: #FDDA24;
+      }
+       .curveWrap .curve path:nth-child(6n + 4) {
+           stroke: #9BD3DD;
+      }
+       .curveWrap .curve path:nth-child(6n + 5) {
+           stroke: #0d5257;
+      }
+       .curveWrap .curve path:nth-child(6n + 6) {
+           stroke: #9f7d23;
+      }
+@keyframes curve {
+    50% {
+      transform: rotateX(360deg) scaley(1) skewY(8deg);
+      stroke-opacity: 1;
+ }
+}

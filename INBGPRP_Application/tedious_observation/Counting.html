@@ -5,231 +5,10 @@
 {{ endblock }}
 {{ block content }}
 
-    <!-- CSS -->
-    <style>
-        /* !! Basic css*/
-        html, body {
-          height: fit-content;
-        }
-        body {
-            background: radial-gradient(#222, #000) no-repeat;
-            color: white;
-
-        }
-        h1 {text-align: center}
-        h2 {text-align: center}
-        td {text-align: center}
-        tr {text-align: right}
-
-        /*  !! otree changes */
-        .otree-timer {display: None}
-        .otree-title{display: None}
-
-        /* !! ribbons */
-        .curveWrap {
-          opacity: 1;
-          width: 150vw;
-          height: 100vh;
-          position: absolute;
-          transform: translateX(-30vw) rotate(0deg);
-          will-change: transform;
-        }
-          .curveWrap .curve {
-              stroke-linecap: round;
-              stroke-opacity: 0;
-          }
-              .curveWrap .curve path {
-              transform-origin: center;
-              }
-              .curveWrap .curve path:nth-child(1) {
-                  stroke-width: 33;
-                  animation: curve 35s linear 1.6s infinite;
-              }
-               .curveWrap .curve path:nth-child(6n + 1) {
-                   stroke: #EAAA00;
-              }
-               .curveWrap .curve path:nth-child(6n + 2) {
-                   stroke: #005EB8;
-              }
-               .curveWrap .curve path:nth-child(6n + 3) {
-                   stroke: #FDDA24;
-              }
-               .curveWrap .curve path:nth-child(6n + 4) {
-                   stroke: #9BD3DD;
-              }
-               .curveWrap .curve path:nth-child(6n + 5) {
-                   stroke: #0d5257;
-              }
-               .curveWrap .curve path:nth-child(6n + 6) {
-                   stroke: #9f7d23;
-              }
-               .curveWrap .curve path:nth-child(2) {
-                   stroke-width: 46;
-                   animation: curve 35s linear 3.2s infinite;
-              }
-               .curveWrap .curve path:nth-child(6n + 1) {
-                   stroke: #EAAA00;
-              }
-               .curveWrap .curve path:nth-child(6n + 2) {
-                   stroke: #005EB8;
-              }
-               .curveWrap .curve path:nth-child(6n + 3) {
-                   stroke: #FDDA24;
-              }
-               .curveWrap .curve path:nth-child(6n + 4) {
-                   stroke: #9BD3DD;
-              }
-               .curveWrap .curve path:nth-child(6n + 5) {
-                   stroke: #0d5257;
-              }
-               .curveWrap .curve path:nth-child(6n + 6) {
-                   stroke: #9f7d23;
-              }
-               .curveWrap .curve path:nth-child(3) {
-                   stroke-width: 18;
-                   animation: curve 35s linear 4.8s infinite;
-              }
-               .curveWrap .curve path:nth-child(6n + 1) {
-                   stroke: #EAAA00;
-              }
-               .curveWrap .curve path:nth-child(6n + 2) {
-                   stroke: #005EB8;
-              }
-               .curveWrap .curve path:nth-child(6n + 3) {
-                   stroke: #FDDA24;
-              }
-               .curveWrap .curve path:nth-child(6n + 4) {
-                   stroke: #9BD3DD;
-              }
-               .curveWrap .curve path:nth-child(6n + 5) {
-                   stroke: #0d5257;
-              }
-               .curveWrap .curve path:nth-child(6n + 6) {
-                   stroke: #9f7d23;
-              }
-               .curveWrap .curve path:nth-child(4) {
-                   stroke-width: 34;
-                   animation: curve 35s linear 6.4s infinite;
-              }
-               .curveWrap .curve path:nth-child(6n + 1) {
-                   stroke: #EAAA00;
-              }
-               .curveWrap .curve path:nth-child(6n + 2) {
-                   stroke: #005EB8;
-              }
-               .curveWrap .curve path:nth-child(6n + 3) {
-                   stroke: #FDDA24;
-              }
-               .curveWrap .curve path:nth-child(6n + 4) {
-                   stroke: #9BD3DD;
-              }
-               .curveWrap .curve path:nth-child(6n + 5) {
-                   stroke: #0d5257;
-              }
-               .curveWrap .curve path:nth-child(6n + 6) {
-                   stroke: #9f7d23;
-              }
-        @keyframes curve {
-            50% {
-              transform: rotateX(360deg) scaley(1) skewY(8deg);
-              stroke-opacity: 1;
-         }
-        }
-
-        /* !! Timer */
-        /* Sets the containers height and width */
-        .base-timer {
-          position: relative;
-        }
-
-        /* Removes SVG styling that would hide the time label */
-        .base-timer__circle {
-          fill: none;
-          stroke: none;
-        }
-
-        /* The SVG path that displays the timer's progress */
-        .base-timer__path-elapsed {
-          stroke-width: 7px;
-          stroke: grey;
-        }
-        .base-timer__label {
-            position: absolute;
-
-            /* Size should match the parent container */
-            width: inherit;
-            height: inherit;
-
-            /* Keep the label aligned to the top */
-            top: 23%;
-            left: 12%;
-
-            /* Create a flexible box that centers content vertically and horizontally */
-            display: flex;
-            align-items: center;
-            justify-content: end;
-
-            /* Sort of an arbitrary number; adjust to your liking */
-            font-size: 35px;
-        }
-
-        .base-timer__path-remaining {
-              /* Just as thick as the original ring */
-              stroke-width: 7px;
-
-              /* Rounds the line endings to create a seamless circle */
-              stroke-linecap: round;
-
-              /* Makes sure the animation starts at the top of the circle */
-              transform: rotate(90deg);
-              transform-origin: center;
-
-              /* One second aligns with the speed of the countdown timer */
-              transition: 1s linear all;
-
-              /* Allows the ring to change color when the color value updates */
-            }
-            .base-timer__path-remaining.green {
-              stroke: #00f21c;
-            }
-            .base-timer__path-remaining.lime {
-                stroke: #9bf200;
-            }
-
-            .base-timer__path-remaining.orange {
-              stroke: #e8f200;
-            }
-            .base-timer__path-remaining.sunset{
-                stroke: #fec401;
-            }
-            .base-timer__path-remaining.pink-lemonade {
-              stroke: #e94f01;
-            }
-            .base-timer__path-remaining.cherry{
-                stroke: #da0001
-            }
-        .base-timer__svg {
-          /* Flips the svg and makes the animation to move left-to-right */
-          transform: scaleX(-1);
-        }
-
-        /* !! Custom divs */
-        #game {
-            background-color: #2C2A29;
-            position: relative;
-            width: 100%;
-            padding: 8%;
-            margin-top: 5%;
-
-        }
-        #game-table{
-            margin: -10%;
-        }
-        #game-info{
-            margin-top: -5%;
-        }
-    </style>
-
+    <head>
+        <link rel="stylesheet" href="{{ static 'counting/styles/progress.css' }}">
+        <link rel="stylesheet" href="{{ static 'counting/styles/master.css' }}">
+    </head>
     <!-- Gen HTML -->
     <body>
         <div class="curveWrap">
@@ -267,113 +46,65 @@
                     </table>
                 </div>
                 <div id="game-info" class="col-4">
-                    <div  class="row row-cols">
-                        <h1>Earned: {{participant.payoff}}</h1>
+                    <div id="circle-titles" class="row row-cols-2">
+                        <div class="col-6">
+                            <p>Time Left</p>
+                        </div>
+                        <div class="col-6">
+                            <p>Goal Progress</p>
+                        </div>
                     </div>
-                    <div  class="row row-cols">
-                        <h2 id="feedback"></h2>
-                    </div>
-                    <div class="row row-cols-2">
-
+                    <div id="circles" class="row row-cols-2-xl">
                         <!-- Timer -->
                         <div class="col-6">
                             <span id="circle-timer"></span>
                         </div>
-                        <div class="col-6">Progress</div>
+                        <!-- Progress -->
+                        <div class="col-6">
+                            <span id="progress-bowl"></span>
+                        </div>
                     </div>
                     <div id="bot_container2" class="row row-col">
-                        <div class="col"> {{ formfields }} </div>
+                        <div class="col"> {{ formfield 'zeros_guess' }} </div>
+                    </div>
+                    <div  class="row row-cols">
+                        <h2 id="feedback"></h2>
+                    </div>
+                    <div  class="row row-cols">
+                        <h1>Earned: {{participant.payoff}}</h1>
                     </div>
                 </div>
             </div>
         </div>
     </body>
 
-    <!-- Table Scripts -->
-    <script>
-         console.log("matrix: ", js_vars.matrix)
-         console.log("zeros: ", js_vars.zeros)
-         console.log("ones: ",js_vars.ones)
-         function extract_values(string_data){
-             let i = 0
-             let j = i + 10
-             let data = Array(15)
-             let row_data = '';
-             while (i < 150) {
-                row_data = string_data.slice(i, j)
-                data[i / 10] = Array(10).fill(0)
-                for (let k = 0; k < row_data.length; k++) {
-                    data[i / 10][k] = ~~row_data[k]
-                }
-                i += 10
-                j += 10
-            }
-            return data
-        }
-        function buildTable(matrix){
-             let table = document.getElementById('data_body')
-
-             for (let i = 0; i < 15; i++){
-                 let row = []
-                     row =`<tr>
-                             <th class = "table-bordered table-dark" scope="row">${i+1}</th>
-                             <td class = "table-secondary table-bordered border-3">${matrix[i][0]}</td>
-                             <td class = "table-secondary table-bordered border-3">${matrix[i][1]}</td>
-                             <td class = "table-secondary table-bordered border-3">${matrix[i][2]}</td>
-                             <td class = "table-secondary table-bordered border-3">${matrix[i][3]}</td>
-                             <td class = "table-secondary table-bordered border-3">${matrix[i][4]}</td>
-                             <td class = "table-secondary table-bordered border-3">${matrix[i][5]}</td>
-                             <td class = "table-secondary table-bordered border-3">${matrix[i][6]}</td>
-                             <td class = "table-secondary table-bordered border-3">${matrix[i][7]}</td>
-                             <td class = "table-secondary table-bordered border-3">${matrix[i][8]}</td>
-                             <td class = "table-secondary table-bordered border-3">${matrix[i][9]}</td>
-                           </tr>`
-                 table.innerHTML += row
-             }
-        }
-         let data = extract_values(js_vars.matrix)
-         let header = document.getElementById('feedback')
-         buildTable(data)
-    </script>
-
-    <!-- Feedback -->
-    <script>
-         const correct = /.*Correct.*/
-         const incorrect = /.*Incorrect.*/
-         let feedback = js_vars.feedback
-
-         if(feedback.match(correct)){
-             document.getElementById("feedback").classList.toggle('text-success')
-         }else if(feedback.match(incorrect)) {
-             document.getElementById("feedback").classList.toggle('text-danger')
-         }else {
-             document.getElementById("feedback").classList.toggle('text-info')
-         }
-         header.innerHTML += feedback
-    </script>
+    <!-- Main Script -->
+    <script type="module" src="{{ static 'counting/scripts/main.js' }}"></script>
 
     <!--Timer scripts-->
-    <script>
-        let time_limit = 60; // TODO Change back to 60
+    <script type="module">
+        const zeroPad = (num, places) => String(num).padStart(places, '0')
+        let timeLimit = 60; // TODO Change back to 60
         switch(~~`{{ subsession.stage }}`) {
             case 1:
-                time_limit *= 10 // TODO Change back to 10
+                timeLimit *= 10 // TODO Change back to 10
                 break
             case 2:
-                time_limit *= 20
+                timeLimit *= 20
                 break
             case 3:
-                time_limit *= 20
+                timeLimit *= 20
                 break
             default:
                 console.log("Problem in switch case... In counting.html. ")
                 break
         }
-        const INFO2_THRESHOLD = time_limit*(5/6);
-        const WARNING_THRESHOLD = time_limit*(4/6);
-        const WARNING2_THRESHOLD = time_limit*(3/6);
-        const ALERT_THRESHOLD = time_limit*(2/6);
-        const ALERT2_THRESHOLD = time_limit*(1/6);
+
+        const INFO2_THRESHOLD = timeLimit*(5/6);
+        const WARNING_THRESHOLD = timeLimit*(4/6);
+        const WARNING2_THRESHOLD = timeLimit*(3/6);
+        const ALERT_THRESHOLD = timeLimit*(2/6);
+        const ALERT2_THRESHOLD = timeLimit*(1/6);
         const FULL_CIRCLE = 283 //2 * pi * 45
         const COLOR_CODES = {
             info: { color: "green" },
@@ -398,8 +129,9 @@
                 threshold: ALERT2_THRESHOLD,
             }
         };
-        let remainingPathColor = COLOR_CODES.info.color;
+        let remainingPathColor = COLOR_CODES.info.color
 
+        //Update Time
         document.getElementById("circle-timer").innerHTML =
             `<div class="base-timer">
                 <svg class="base-timer__svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg">
@@ -424,27 +156,18 @@
                     <span id="min-left"></span> : <span id="secs-left"></span>
                 </span>
             </div>`;
-        const zeroPad = (num, places) => String(num).padStart(places, '0')
-        let minutes = document.getElementById('min-left');
-        document.addEventListener("DOMContentLoaded", function (event) {
-            $('.otree-timer__time-left').on('update.countdown', function (event) {
-                minutes.innerText = zeroPad(event.offset.totalMinutes,2);
-            });
-        });
-        let seconds = document.getElementById('secs-left');
-        document.addEventListener("DOMContentLoaded", function (event) {
-            $('.otree-timer__time-left').on('update.countdown', function (event) {
-                seconds.innerText = zeroPad(event.offset.totalSeconds%60, 2);
-            });
-        });
 
+        //Update Stroke-Dasharray
         document.addEventListener("DOMContentLoaded", function (event) {
             $('.otree-timer__time-left').on('update.countdown', function (event) {
                 let timeLeft = event.offset.totalSeconds;
-                const circle_fraction = () => {return ((timeLeft/time_limit) * FULL_CIRCLE).toFixed(0)}
+
+                //Update DashArray length
+                const circle_fraction = () => {return ((timeLeft/timeLimit) * FULL_CIRCLE).toFixed(0)}
                 const circle_dashArray = `${(circle_fraction())} ${FULL_CIRCLE}`;
                 document.getElementById("base-timer-path-remaining").setAttribute("stroke-dasharray", circle_dashArray)
 
+                //Update DashArray color
                 const {alert, alert2, warning, warning2, info, info2} = COLOR_CODES
                 if(timeLeft <= alert2.threshold){
                     document
@@ -485,5 +208,65 @@
 
             });
         });
+
+        //Add minutes
+        let minutes = document.getElementById('min-left');
+        document.addEventListener("DOMContentLoaded", function (event) {
+            $('.otree-timer__time-left').on('update.countdown', function (event) {
+                minutes.innerText = zeroPad(event.offset.totalMinutes,2);
+            });
+        });
+        //Add seconds
+        let seconds = document.getElementById('secs-left');
+        document.addEventListener("DOMContentLoaded", function (event) {
+            $('.otree-timer__time-left').on('update.countdown', function (event) {
+                seconds.innerText = zeroPad(event.offset.totalSeconds%60, 2);
+            });
+        });
     </script>
+
+    <!-- Progress Circle Scripts-->
+    <script type="module">
+        document.getElementById("progress-bowl").innerHTML =
+            `
+            <svg version="1.1" mlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" style="display: none;">
+                <symbol id="wave">
+                    <path d="M420,20c21.5-0.4,38.8-2.5,51.1-4.5c13.4-2.2,26.5-5.2,27.3-5.4C514,6.5,518,4.7,528.5,2.7c7.1-1.3,17.9-2.8,31.5-2.7c0,0,0,0,0,0v20H420z"></path>
+                    <path d="M420,20c-21.5-0.4-38.8-2.5-51.1-4.5c-13.4-2.2-26.5-5.2-27.3-5.4C326,6.5,322,4.7,311.5,2.7C304.3,1.4,293.6-0.1,280,0c0,0,0,0,0,0v20H420z"></path>
+                    <path d="M140,20c21.5-0.4,38.8-2.5,51.1-4.5c13.4-2.2,26.5-5.2,27.3-5.4C234,6.5,238,4.7,248.5,2.7c7.1-1.3,17.9-2.8,31.5-2.7c0,0,0,0,0,0v20H140z"></path>
+                    <path d="M140,20c-21.5-0.4-38.8-2.5-51.1-4.5c-13.4-2.2-26.5-5.2-27.3-5.4C46,6.5,42,4.7,31.5,2.7C24.3,1.4,13.6-0.1,0,0c0,0,0,0,0,0l0,20H140z"></path>
+                </symbol>
+            </svg>
+            <div class="box">
+
+                <div class="percent">
+                    <div class="percentNum" id="count">0</div>
+                    <div class="percentB">%</div>
+                </div>
+                <div id="water" class="water">
+                    <svg viewBox="0 0 560 20" class="water_wave water_wave_back">
+                        <use xlink:href="#wave"></use>
+                    </svg>
+                    <svg viewBox="0 0 560 20" class="water_wave water_wave_front">
+                        <use xlink:href="#wave"></use>
+                    </svg>
+                </div>
+            </div>
+            `;
+
+        let cnt=document.getElementById("count");
+        let water=document.getElementById("water");
+        let percent=cnt.innerText;
+        let correct = parseFloat(`{{ participant.payoff}}`.slice(1))/0.25
+        let table_goal = `{{ participant.table_goal }}`
+        let interval=setInterval(function(){
+            percent = correct/~~table_goal * 100
+            cnt.innerHTML = percent;
+            water.style.transform='translate(0'+','+(100-percent)+'%)';
+            if(percent==100){
+              clearInterval(interval);
+            }
+        },60);
+    </script>
+
 {{ endblock }}

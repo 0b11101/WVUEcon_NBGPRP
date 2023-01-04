@@ -1,0 +1,12 @@
+/* !! Basic css*/
+html, body {
+  height: fit-content;
+}
+body {
+    background: radial-gradient(#222, #000) no-repeat;
+    color: white;
+}
+h1 {text-align: center}
+h2 {text-align: center}
+td {text-align: center}
+tr {text-align: right}
