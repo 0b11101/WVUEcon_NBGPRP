@@ -19,7 +19,7 @@ Welcome!
                 calc(-.3*var(--s)) calc(-.3*var(--s))/var(--_g),
                 conic-gradient(from 90deg at 20% 20%,var(--c2) 25%,var(--c1) 0)
                  0 0/var(--s) var(--s);
-              animation: m 20s infinite;
+              animation: m 30s infinite;
             }
             @keyframes m {
               0% {
@@ -78,7 +78,7 @@ Welcome!
         }
         #exp_table {
             opacity: 1;
-            transition-duration: 5s;
+            transition-duration: 10s;
             transition-property: opacity;
         }
         #exp_table.fade_in{
@@ -86,7 +86,7 @@ Welcome!
         }
         #info_table{
             opacity: 1;
-            transition-duration: 20s;
+            transition-duration: 30s;
             transition-property: opacity;
         }
         #info_table.fade_in{
@@ -94,7 +94,7 @@ Welcome!
         }
         #comp_number{
             opacity: 1;
-            transition-duration: 60s;
+            transition-duration: 70s;
             transition-property: opacity;
         }
         #comp_number.fade_in{
@@ -111,8 +111,13 @@ Welcome!
             <p id="info" class="text-start">
                 <ul>
                     <li>
-                        Your job for the next 50 minutes is to be count the number
-                        of zeros that you see in a 10x15 table <b><i>like the one you see below.</i></b>
+                        Your job for the next 50 minutes is to count the number
+                        of randomly generated zeros that you see in 10x15 tables <b><i>
+                        like the one you see below.</i></b>
+                        <li>
+                            Once you think you counted the correct amount of <b>zeros</b>
+                            enter the number in a response box like the one at the bottom of the page.
+                        </li>
                         <ul>
                             <li>
                                 <table id = "exp_table" class = "table table-hover table-bordered table-sm">
@@ -141,15 +146,15 @@ Welcome!
                         </ul>
                     </li>
                     <li>
-                        Before you start you have the option to set a goal for the number of
-                        responses you would think you can answer correctly within the time limit.
+                        Before you start, you have the option to set a goal for the amount of
+                        tables you think you can count correctly within the time limit.
                         <ul>
-                            <li>Simply hit the next button to not set a goal and the default
-                                will be set.
-                            </li>
                             <li>
                                 Type your goal into the provided prompt to set a goal then press
                                 the enter key.
+                            </li>
+                            <li><b>Goals are optional.</b> Hit the next button, or press the enter key, to continue
+                                without it and the default will be set. (See second table below)
                             </li>
                         </ul>
                     </li>
@@ -159,7 +164,10 @@ Welcome!
                     </li>
                     <li>
                         If you enter the correct amount of 0s in the
-                        box below the table you will receive a reward.<br>
+                        corresponding prompt, you will receive a reward. (See table for payout details)<br>
+                    </li>
+                    <li>
+                        Once you submit an answer a new table of 0s and 1s will be generated.
                     </li>
                     <li>
                         There will be three stages:<br>
@@ -206,7 +214,7 @@ Welcome!
                 </ul>
             </p>
 
-            To confirm that you have read and understand the instruction please enter
+            To confirm that you have read and understand the instruction, please enter
             <text id = "comp_number"> <b> {{ C.COMP_NUMBER }} </b> </text> in the box provided below.
             <script>
                 document.getElementById("comp_number").classList.toggle('fade_in')

@@ -64,14 +64,14 @@
                             <span id="progress-bowl"></span>
                         </div>
                     </div>
-                    <div id="bot_container2" class="row row-col">
+                    <div id="bot_container2" class="row row-col-3">
+                        <div  class="row col-row">
+                            <p id="feedback"></p>
+                        </div>
+                        <div  class="row row-cols">
+                           <p> Earned: {{participant.payoff}}</p>
+                        </div>
                         <div class="col"> {{ formfield 'zeros_guess' }} </div>
-                    </div>
-                    <div  class="row row-cols">
-                        <h2 id="feedback"></h2>
-                    </div>
-                    <div  class="row row-cols">
-                        <h1>Earned: {{participant.payoff}}</h1>
                     </div>
                 </div>
             </div>
@@ -262,9 +262,10 @@
         let interval=setInterval(function(){
             percent = correct/~~table_goal * 100
             cnt.innerHTML = percent;
-            water.style.transform='translate(0'+','+(100-percent)+'%)';
-            if(percent==100){
-              clearInterval(interval);
+            if(percent < 100) {
+                water.style.transform='translate(0'+','+(100-percent)+'%)';
+            }else{
+                water.style.transform = 'translate(0' + ',' + (100) + '%)';
             }
         },60);
     </script>

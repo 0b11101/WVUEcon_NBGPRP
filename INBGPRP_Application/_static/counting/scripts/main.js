@@ -1,13 +1,16 @@
 import {GameTable} from "./game_table.js";
-//Testing
-console.log("matrix: ", js_vars.matrix)
-console.log("zeros: ", js_vars.zeros)
-console.log("ones: ",js_vars.ones)
 
 //Build Game Table
 let gameTable = new GameTable()
-let data = gameTable.extract_values(js_vars.matrix)
-gameTable.BuildTable(data)
+document.addEventListener("DOMContentLoaded", ()=>{
+ let data = gameTable.extract_values(js_vars.matrix)
+ gameTable.BuildTable(data)
+  //Testing
+ console.log("matrix: ", js_vars.matrix)
+ console.log("zeros: ", js_vars.zeros)
+ console.log("ones: ",js_vars.ones)
+
+})
 
 //Feedback
 let header = document.getElementById('feedback')
