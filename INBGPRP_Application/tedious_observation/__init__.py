@@ -30,10 +30,6 @@ class Subsession(BaseSubsession):
     is_last_period = models.BooleanField()
     timeout_happened = models.BooleanField()
 
-    correct = models.IntegerField(initial=0)
-    wrong = models.IntegerField(initial=0)
-    prev_stage_correct = models.IntegerField(initial=0)
-
 
 class Group(BaseGroup):
     pass
