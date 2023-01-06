@@ -16,9 +16,9 @@ def comp_num_generator():
 class C(BaseConstants):
     NAME_IN_URL = 'tedious_observation'
     PLAYERS_PER_GROUP = None
-    NUM_PERIODS_PER_GAME = 100  # 1000 bc I want the app to be time
+    ROUNDS_IN_STAGE = 100  # 1000 bc I want the app to be time
     TIMEOUT_HAPPENS = [10, 20, 20]
-    NUM_ROUNDS = 3 * NUM_PERIODS_PER_GAME
+    NUM_ROUNDS = 3 * ROUNDS_IN_STAGE
     PAYOUT = 0.25
     COMP_NUMBER = comp_num_generator()
 
@@ -26,8 +26,13 @@ class C(BaseConstants):
 class Subsession(BaseSubsession):
     stage = models.IntegerField(initial=0)
     round = models.IntegerField(initial=0)
+
     is_last_period = models.BooleanField()
     timeout_happened = models.BooleanField()
+
+    correct = models.IntegerField(initial=0)
+    wrong = models.IntegerField(initial=0)
+    prev_stage_correct = models.IntegerField(initial=0)
 
 
 class Group(BaseGroup):
@@ -36,31 +41,41 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     # Game info
-    num_trials = models.IntegerField(initial=0)
-    num_correct = models.IntegerField(initial=0)
+    correct = models.BooleanField()
     feedback = models.StringField(initial="You\'ll see feedback here")
 
     # Player input
+    comprehension_input = models.IntegerField(blank=False)
     table_goal = models.IntegerField(intitial=10, label="Table Goal (Optional)", blank=True)
-    comprehension_input = models.IntegerField()
     zeros_guess = models.IntegerField(min=0, label="Input the amount of zeros here")
+
+    # Participant info
+    correct_s1 = models.IntegerField(initial=0)
+    correct_s2 = models.IntegerField(initial=0)
+    correct_s3 = models.IntegerField(initial=0)
 
     # Validation
     zeros_actual = models.IntegerField()
     ones = models.IntegerField()
+
+    # Stage info
+    stage = models.IntegerField(initial=1)
+    first_round = models.BooleanField()
 
 
 def creating_session(subsession: Subsession):
     if subsession.round_number == 1:
         ses_stage = 1
         ses_round = 1
+        ses_correct = 0
         timeout = False
         # loop to go through subsessions
         for ss in subsession.in_rounds(1, C.NUM_ROUNDS):
             ss.stage = ses_stage
             ss.round = ses_round
+            ses_correct += ss.correct
             ss.timeout_happened = timeout
-            ss.is_last_period = ses_round == C.NUM_PERIODS_PER_GAME
+            ss.is_last_period = ses_round == C.ROUNDS_IN_STAGE
             if ss.is_last_period or ss.timeout_happened:
                 ses_stage += 1
                 ses_round = 1
@@ -96,16 +111,100 @@ def display_timer(player):
     return get_timeout_seconds(player) > 0
 
 
-def next_sg_session(player: Player, subsession: Subsession):
+def advance_stage(subsession: Subsession):
+    print("advance_stage happened")
     subsession.stage += 1
     subsession.round = 1
+    subsession.correct = 0
     subsession.timeout_happened = True
 
 
+def stage_number(subsesion: Subsession) -> int:
+    return subsesion.stage
+
+
+def correct_in_stage(player: Player) -> int:  # TODO
+    if player.round_number <= 1 and \
+            player.field_maybe_none('correct') is not None:
+        return int(player.correct)
+
+    participant = player.participant
+    participant.correct_s1, participant.correct_s2, participant.correct_s3 = 0, 0, 0
+    cur_stage = stage_number(player.subsession)
+    start, end = 0, 0
+    par_correct = None
+
+    match cur_stage:
+        case 1:
+            print("case 1")
+            par_correct = participant.correct_s1
+            start, end = 1, C.ROUNDS_IN_STAGE
+        case 2:
+            print("case 2")
+            par_correct = participant.correct_s2
+            start, end = C.ROUNDS_IN_STAGE + 1, C.ROUNDS_IN_STAGE * 2
+        case 3:
+            print("case 3")
+            par_correct = participant.correct_s3
+            start, end = C.ROUNDS_IN_STAGE * 2 + 1, C.ROUNDS_IN_STAGE * 3
+        case _:
+            print("ERROR: default switch case")
+            return 1234567890
+
+    for s_round in player.in_rounds(start, end):
+        if s_round.field_maybe_none('zeros_actual') is None:
+            print(f's_round stage: {s_round.round_number}')
+            return par_correct
+        if s_round.field_maybe_none('correct') is not None and s_round.correct:
+            par_correct += int(s_round.correct)
+        else:
+            print("REMOVE: s_round.correct false")
+
+    return par_correct
+
+
+# Checks to see if there have been three consecutive wrongs
+def penalty_check(player) -> int:  # TODO... test
+    if player.round_number <= 1 and \
+            player.field_maybe_none('correct') is not None:
+        return int(player.correct)
+
+    cur_stage = stage_number(player.subsession)
+    wrong_count = 0
+    start, end = 0, 0
+
+    match cur_stage:
+        case 1:
+            print("w case 1")
+            start, end = 1, C.ROUNDS_IN_STAGE
+        case 2:
+            print("w case 2")
+            start, end = C.ROUNDS_IN_STAGE + 1, C.ROUNDS_IN_STAGE * 2
+        case 3:
+            print("w case 3")
+            start, end = C.ROUNDS_IN_STAGE * 2 + 1, C.ROUNDS_IN_STAGE * 3
+        case _:
+            print("ERROR IN W: default switch case")
+            return 987654321
+
+    for s_round in player.in_rounds(start, end):
+        if s_round.field_maybe_none('zeros_actual') is None:
+            return wrong_count
+        if s_round.field_maybe_none('correct') is not None and not s_round.correct:
+            wrong_count += 1
+        else:
+            wrong_count = 0
+            print(f"wrong count zero: {wrong_count}")
+
+    return wrong_count
+
+
 # PAGES
+
 class Info(Page):
     form_model = 'player'
     form_fields = ['table_goal', 'comprehension_input']
+
     @staticmethod
     def error_message(player: Player, values):
         if values['comprehension_input'] != C.COMP_NUMBER:
@@ -116,21 +215,28 @@ class Info(Page):
         participant = player.participant
         participant.table_goal = player.field_maybe_none('table_goal')
         if player.subsession.stage == 1:
-            participant.expiry = time.time() + 60 * 10   # TODO change back to 60 * 10
+            participant.correct_s1 = player.correct_s1
+            participant.expiry = time.time() + 60 * 10  # TODO change back to 60 * 10
             if participant.table_goal is None:
-                participant.table_goal = 10;
+                participant.table_goal = 10
+            if participant.payoff > 0:
+                print(f'player.in_all_rounds().__sizeof__(): {player.in_all_rounds().__sizeof__()}')
+        elif player.subsession.stage == 2:
+            participant.correct_s2 = player.correct_s2
+            participant.expiry = time.time() + 60 * 20
+            if participant.table_goal is None:
+                participant.table_goal = 20;
         else:
+            participant.correct_s3 = player.correct_s3
             participant.expiry = time.time() + 60 * 20
             if participant.table_goal is None:
                 participant.table_goal = 20;
 
         if timeout_happened:
-            next_sg_session(player)
-
-        print("table_goal {0}".format(participant.table_goal))
+            advance_stage(player)
 
     @staticmethod
-    def is_displayed(player: Player):
+    def is_displayed(player: Player):  # TODO use this for congratulations page
         subsession = player.subsession
         return subsession.round == 1
 
@@ -139,27 +245,45 @@ class Counting(Page):
     form_model = 'player'
     form_fields = ['zeros_guess', 'table_goal']
 
-    display_timer = display_timer
     get_timeout_seconds = get_timeout_seconds
+    correct, wrong = 0, 0
 
     @staticmethod
     def is_displayed(player: Player):
         return get_timeout_seconds(player) > 3
 
+    # TODO idea is to check player correct and add variable to subsession correct then subtract
+    # that number every time
+
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
         # TODO change display to participant.payoff and remove logic to look at previous player rounds.
-        print(f'zeros_actual: {player.zeros_actual}, zero_g: {player.zeros_guess}')
         if player.zeros_guess == player.zeros_actual:
+            player.correct = True
             player.payoff += C.PAYOUT
-            player.feedback = f'Correct: {player.zeros_guess} = {player.zeros_actual} '
+            player.feedback = f'Correct: {player.zeros_guess} = {player.zeros_actual}'
         else:
-            player.feedback = f'Incorrect: {player.zeros_guess} ≠ {player.zeros_actual} '
+            player.correct = False
+            penalty = penalty_check(player)
+            if penalty > 2:
+                player.payoff -= C.PAYOUT
+                player.feedback = f'<b>Incorrect: {player.zeros_guess} ≠ {player.zeros_actual}<br><br>' \
+                                  f'<span>&Ll;</span>&nbsp' \
+                                  f'Alert: 0.25 penalty!' \
+                                  f'&nbsp<span>&Gg;</span></b>'
+            elif penalty > 1:
+                player.feedback = f'Incorrect: {player.zeros_guess} ≠ {player.zeros_actual}<br><br>' \
+                                  f'<span>&#9888;</span>&nbsp' \
+                                  f'<b>Warning: <span>&#9888;</span><br>' \
+                                  f'$0.25 penalty with <br>3 consecutive wrong answers!</b>'
+            else:
+                player.feedback = f'Incorrect: {player.zeros_guess} ≠ {player.zeros_actual} '
 
     @staticmethod
     def js_vars(player):
+        print()
+        correct_s = correct_in_stage(player)
         m_values = matrix_creation(player)
-        print(f'[1]: {m_values[1]}, [2]: {m_values[2]}')
         if player.round_number > 1:
             last_round = player.in_round(player.round_number - 1)
         else:
@@ -168,8 +292,13 @@ class Counting(Page):
             matrix=m_values[0],
             zeros=m_values[1],
             ones=m_values[2],
-            feedback=last_round.feedback
+            feedback=last_round.feedback,
+            correct=correct_s,
         )
+
+
+class CongutulationsPage(Page):
+    form_model = 'player'
 
 
 class ResultsWaitPage(WaitPage):  # TODO use participants.payoff to display money

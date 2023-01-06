@@ -18,7 +18,12 @@ SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=0.25, participation_fee=0.00, doc=""
 )
 
-PARTICIPANT_FIELDS = ['expiry', 'table_goal']
+PARTICIPANT_FIELDS = ['expiry',
+                      'table_goal',
+                      'correct_s1',
+                      'correct_s2',
+                      'correct_s3'
+                      ]
 SESSION_FIELDS = []
 
 # ISO-639 code

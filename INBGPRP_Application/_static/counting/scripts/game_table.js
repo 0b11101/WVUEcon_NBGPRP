@@ -13,7 +13,6 @@ export class GameTable {
             i += 10
             j += 10
         }
-        console.log("extract values")
         return data
     }
     BuildTable(matrix) {

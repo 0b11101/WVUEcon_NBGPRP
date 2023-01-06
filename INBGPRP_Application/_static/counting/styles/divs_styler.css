@@ -11,7 +11,7 @@
     margin-left: -5%;
 }
 #game-info{
-    margin-top: 0%;
+    margin-top: 3%;
 }
 #game-info:hover{
     padding: 2%;
@@ -24,11 +24,36 @@
        z-index:9999;
 }
 #circle-titles{
-    font-size: 125%;
+    font-size: 124%;
+    padding-top: 5%;
     text-align: left;
+    border-left: solid grey 1px;
+    border-top: solid grey 1px;
+    border-right: solid grey 1px;
+
+}
+#circles{
+    border-left: solid grey 1px;
+    border-right: solid grey 1px;
+    border-bottom: solid grey 1px;
+    padding-bottom: 5%;
 }
 #bot_container2{
-    margin-top: 39.3%;
     background: #212529;
     padding-top: 5%;
+    border: solid grey 1px;
+}
+
+#feedback{
+    padding: 1%;
+    margin-left: 3%;
+}
+
+.blink {
+    animation: animate 2s linear 3;
+}
+@keyframes animate{
+    0%{opacity: 0}
+    50%{opacity: 100}
+    100%{opacity: 0}
 }

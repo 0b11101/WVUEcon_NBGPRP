@@ -66,7 +66,7 @@
                     </div>
                     <div id="bot_container2" class="row row-col-3">
                         <div  class="row col-row">
-                            <p id="feedback"></p>
+                            <p id="feedback" class="blink"></p>
                         </div>
                         <div  class="row row-cols">
                            <p> Earned: {{participant.payoff}}</p>
@@ -254,18 +254,21 @@
             </div>
             `;
 
-        let cnt=document.getElementById("count");
-        let water=document.getElementById("water");
-        let percent=cnt.innerText;
-        let correct = parseFloat(`{{ participant.payoff}}`.slice(1))/0.25
-        let table_goal = `{{ participant.table_goal }}`
+        let cnt=document.getElementById("count")
+        let water=document.getElementById("water")
+        let percent=cnt.innerText
+        let correct = js_vars.correct
+        console.log(correct)
+        let table_goal = ~~`{{ participant.table_goal }}`
+        console.log(table_goal)
         let interval=setInterval(function(){
-            percent = correct/~~table_goal * 100
-            cnt.innerHTML = percent;
-            if(percent < 100) {
-                water.style.transform='translate(0'+','+(100-percent)+'%)';
-            }else{
-                water.style.transform = 'translate(0' + ',' + (100) + '%)';
+            percent = correct/table_goal * 100
+            cnt.innerHTML = ""+Math.floor(percent);
+
+            if(percent < 100){
+                water.style.transform='translate(0'+','+(100-percent+2)+'%)';
+            } else {
+                water.style.transform='translate(0'+','+(2)+'%)';
             }
         },60);
     </script>
