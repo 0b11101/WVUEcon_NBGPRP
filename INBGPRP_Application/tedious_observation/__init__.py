@@ -42,7 +42,6 @@ class Player(BasePlayer):
 
     # Player input
     comprehension_input = models.IntegerField(blank=False)
-    table_goal = models.IntegerField(intitial=10, label="Table Goal (Optional)", blank=True)
     zeros_guess = models.IntegerField(min=0, label="Input the amount of zeros here")
 
     # Participant info
@@ -57,19 +56,24 @@ class Player(BasePlayer):
     # Stage info
     stage = models.IntegerField(initial=1)
     first_round = models.BooleanField()
+    table_goal = models.IntegerField(intitial=10, label="Table Goal (Optional)", blank=True)
+
+    # congratulations Page
+    congratulated = models.BooleanField(initial=False)
+    choices = models.StringField( label="Please choice an option",
+        choices=['Continue on same stage', 'Move to next stage']
+    )
 
 
 def creating_session(subsession: Subsession):
     if subsession.round_number == 1:
         ses_stage = 1
         ses_round = 1
-        ses_correct = 0
         timeout = False
         # loop to go through subsessions
         for ss in subsession.in_rounds(1, C.NUM_ROUNDS):
             ss.stage = ses_stage
             ss.round = ses_round
-            ses_correct += ss.correct
             ss.timeout_happened = timeout
             ss.is_last_period = ses_round == C.ROUNDS_IN_STAGE
             if ss.is_last_period or ss.timeout_happened:
@@ -108,10 +112,8 @@ def display_timer(player):
 
 
 def advance_stage(subsession: Subsession):
-    print("advance_stage happened")
     subsession.stage += 1
     subsession.round = 1
-    subsession.correct = 0
     subsession.timeout_happened = True
 
 
@@ -132,15 +134,12 @@ def correct_in_stage(player: Player) -> int:  # TODO
 
     match cur_stage:
         case 1:
-            print("case 1")
             par_correct = participant.correct_s1
             start, end = 1, C.ROUNDS_IN_STAGE
         case 2:
-            print("case 2")
             par_correct = participant.correct_s2
             start, end = C.ROUNDS_IN_STAGE + 1, C.ROUNDS_IN_STAGE * 2
         case 3:
-            print("case 3")
             par_correct = participant.correct_s3
             start, end = C.ROUNDS_IN_STAGE * 2 + 1, C.ROUNDS_IN_STAGE * 3
         case _:
@@ -149,18 +148,15 @@ def correct_in_stage(player: Player) -> int:  # TODO
 
     for s_round in player.in_rounds(start, end):
         if s_round.field_maybe_none('zeros_actual') is None:
-            print(f's_round stage: {s_round.round_number}')
             return par_correct
         if s_round.field_maybe_none('correct') is not None and s_round.correct:
             par_correct += int(s_round.correct)
-        else:
-            print("REMOVE: s_round.correct false")
 
     return par_correct
 
 
 # Checks to see if there have been three consecutive wrongs
-def penalty_check(player) -> int:  # TODO... test
+def penalty_check(player) -> int:
     if player.round_number <= 1 and \
             player.field_maybe_none('correct') is not None:
         return int(player.correct)
@@ -171,13 +167,10 @@ def penalty_check(player) -> int:  # TODO... test
 
     match cur_stage:
         case 1:
-            print("w case 1")
             start, end = 1, C.ROUNDS_IN_STAGE
         case 2:
-            print("w case 2")
             start, end = C.ROUNDS_IN_STAGE + 1, C.ROUNDS_IN_STAGE * 2
         case 3:
-            print("w case 3")
             start, end = C.ROUNDS_IN_STAGE * 2 + 1, C.ROUNDS_IN_STAGE * 3
         case _:
             print("ERROR IN W: default switch case")
@@ -190,7 +183,6 @@ def penalty_check(player) -> int:  # TODO... test
             wrong_count += 1
         else:
             wrong_count = 0
-            print(f"wrong count zero: {wrong_count}")
 
     return wrong_count
 
@@ -209,14 +201,15 @@ class Info(Page):
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
         participant = player.participant
+
+        participant.congratulated = False
         participant.table_goal = player.field_maybe_none('table_goal')
+
         if player.subsession.stage == 1:
             participant.correct_s1 = player.correct_s1
-            participant.expiry = time.time() + 60 * 10  # TODO change back to 60 * 10
+            participant.expiry = time.time() + 30  # TODO change back to 60 * 10
             if participant.table_goal is None:
                 participant.table_goal = 10
-            if participant.payoff > 0:
-                print(f'player.in_all_rounds().__sizeof__(): {player.in_all_rounds().__sizeof__()}')
         elif player.subsession.stage == 2:
             participant.correct_s2 = player.correct_s2
             participant.expiry = time.time() + 60 * 20
@@ -248,9 +241,6 @@ class Counting(Page):
     def is_displayed(player: Player):
         return get_timeout_seconds(player) > 3
 
-    # TODO idea is to check player correct and add variable to subsession correct then subtract
-    # that number every time
-
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
         # TODO change display to participant.payoff and remove logic to look at previous player rounds.
@@ -277,7 +267,6 @@ class Counting(Page):
 
     @staticmethod
     def js_vars(player):
-        print()
         correct_s = correct_in_stage(player)
         m_values = matrix_creation(player)
         if player.round_number > 1:
@@ -293,8 +282,21 @@ class Counting(Page):
         )
 
 
-class CongutulationsPage(Page):
+class Congratulations(Page):
     form_model = 'player'
+    form_fields = ['choices']
+
+
+    @staticmethod
+    def is_displayed(player: Player):
+        participant = player.participant
+        player_progress = correct_in_stage(player)
+        return not participant.congratulated and (player_progress >= participant.table_goal)
+
+    @staticmethod
+    def before_next_page(player: Player, timeout_happened):
+        participant = player.participant
+        participant.congratulated = True
 
 
 class ResultsWaitPage(WaitPage):  # TODO use participants.payoff to display money
@@ -305,9 +307,4 @@ class Results(Page):
     pass
 
 
-#    @staticmethod
-#    def is_displayed(player: Player):
-#        return player.subsession.timeout_happened
-
-
-page_sequence = [Info, Counting]
+page_sequence = [Info, Counting, Congratulations]

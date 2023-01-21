@@ -1,0 +1,18 @@
+{{ extends "otree/Page.html" }}
+{{ load otree static }}
+{{ block title }}
+    Congratulations you've reached your goal!
+{{ endblock }}
+{{ block content }}
+    <head>
+        <link rel="stylesheet" href="{{ static 'congratulations/styles/fireworks.css' }}">
+    </head>
+    <body>
+        <div class="pyro">
+            <div class="before"></div>
+            <div class="after"></div>
+        </div>
+        {{ formfields }}
+    </body>
+{{ next_button }}
+{{ endblock }}

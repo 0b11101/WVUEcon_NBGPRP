@@ -8,6 +8,7 @@ html, body {
 }
 body {
     background: radial-gradient(#222, #000) no-repeat;
+    color: white
 }
 h1 {text-align: left}
 p {text-align: left}

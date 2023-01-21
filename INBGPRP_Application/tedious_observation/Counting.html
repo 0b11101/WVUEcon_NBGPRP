@@ -6,23 +6,10 @@
 {{ block content }}
 
     <head>
-        <link rel="stylesheet" href="{{ static 'counting/styles/progress.css' }}">
         <link rel="stylesheet" href="{{ static 'counting/styles/master.css' }}">
     </head>
     <!-- Gen HTML -->
     <body>
-        <div class="curveWrap">
-          <svg width="100%" height="100%" viewBox="0 0 1200 100" xmlns="http://www.w3.org/2000/svg">
-            <g class="curve" fill="none">
-              <!-- You can add more, fewer, and tweak paths... -->
-              <path d="M 0, 60 S 300, -60, 600, 60, 800, -120, 1200 60" />
-              <path d="M 0, 60 S 200, -60, 400, 60, 900, -120, 1200 60" />
-              <path d="M 0, 60 S 200, -70, 400, 70, 800, -120, 1200 60" />
-              <path d="M 0, 60 S 200, -60, 400, 80, 600, -120, 1200 60" />
-              <path d="M 0, 60 S 400, -80, 550, 90, 800, -120, 1200 60" />
-            </g>
-          </svg>
-        </div>
         <div id="game" class="container-xxl" >
             <div class="row">
                 <div  class="col-8">
@@ -84,10 +71,10 @@
     <!--Timer scripts-->
     <script type="module">
         const zeroPad = (num, places) => String(num).padStart(places, '0')
-        let timeLimit = 60; // TODO Change back to 60
+        let timeLimit = 30; // TODO Change back to 60
         switch(~~`{{ subsession.stage }}`) {
             case 1:
-                timeLimit *= 10 // TODO Change back to 10
+                timeLimit *= 1 // TODO Change back to 10
                 break
             case 2:
                 timeLimit *= 20

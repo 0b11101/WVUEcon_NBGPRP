@@ -22,7 +22,8 @@ PARTICIPANT_FIELDS = ['expiry',
                       'table_goal',
                       'correct_s1',
                       'correct_s2',
-                      'correct_s3'
+                      'correct_s3',
+                      'congratulated'
                       ]
 SESSION_FIELDS = []
 
