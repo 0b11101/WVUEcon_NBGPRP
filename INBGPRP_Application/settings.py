@@ -1,3 +1,4 @@
+import os
 from os import environ
 
 SESSION_CONFIGS = [
@@ -34,6 +35,8 @@ LANGUAGE_CODE = 'en'
 # e.g. EUR, GBP, CNY, JPY
 REAL_WORLD_CURRENCY_CODE = 'USD'
 USE_POINTS = False
+
+AUTH_LEVEL = os.environ.get('OTREE_AUTH_LEVEL')
 
 ADMIN_USERNAME = 'admin'
 # for security, best to set admin password in an environment variable

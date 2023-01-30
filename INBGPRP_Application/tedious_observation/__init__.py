@@ -132,6 +132,19 @@ def correct_in_stage(player: Player) -> int:  # TODO
     start, end = 0, 0
     par_correct = None
 
+    if cur_stage == 1:
+        par_correct = participant.correct_s1
+        start, end = 1, C.ROUNDS_IN_STAGE
+    elif cur_stage == 2:
+        par_correct = participant.correct_s2
+        start, end = C.ROUNDS_IN_STAGE + 1, C.ROUNDS_IN_STAGE * 2
+    elif cur_stage == 3:
+        par_correct = participant.correct_s3
+        start, end = C.ROUNDS_IN_STAGE * 2 + 1, C.ROUNDS_IN_STAGE * 3
+    else:
+        print("ERROR: default switch case")
+        return 1234567890
+    """
     match cur_stage:
         case 1:
             par_correct = participant.correct_s1
@@ -145,6 +158,7 @@ def correct_in_stage(player: Player) -> int:  # TODO
         case _:
             print("ERROR: default switch case")
             return 1234567890
+    """
 
     for s_round in player.in_rounds(start, end):
         if s_round.field_maybe_none('zeros_actual') is None:
