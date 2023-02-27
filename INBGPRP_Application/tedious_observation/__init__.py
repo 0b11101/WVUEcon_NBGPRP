@@ -163,17 +163,15 @@ def penalty_check(player) -> int:
     cur_stage = stage_number(player.subsession)
     wrong_count = 0
     start, end = 0, 0
-
-    match cur_stage:
-        case 1:
-            start, end = 1, C.ROUNDS_IN_STAGE
-        case 2:
-            start, end = C.ROUNDS_IN_STAGE + 1, C.ROUNDS_IN_STAGE * 2
-        case 3:
-            start, end = C.ROUNDS_IN_STAGE * 2 + 1, C.ROUNDS_IN_STAGE * 3
-        case _:
-            print("ERROR IN W: default switch case")
-            return 987654321
+    if cur_stage == 1:
+        start, end = 1, C.ROUNDS_IN_STAGE
+    elif cur_stage == 2:
+        start, end = C.ROUNDS_IN_STAGE + 1, C.ROUNDS_IN_STAGE * 2
+    elif cur_stage == 3:
+        start, end = C.ROUNDS_IN_STAGE * 2 + 1, C.ROUNDS_IN_STAGE * 3
+    else:
+        print("ERROR IN W: default switch case")
+        return 987654321
 
     for s_round in player.in_rounds(start, end):
         if s_round.field_maybe_none('zeros_actual') is None:
