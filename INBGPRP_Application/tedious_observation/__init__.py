@@ -28,7 +28,7 @@ class Subsession(BaseSubsession):
     round = models.IntegerField(initial=0)
 
     is_last_period = models.BooleanField()
-    timeout_happened = models.BooleanField()
+    timeout_happened = models.BooleanField(initial=False)
 
 
 class Group(BaseGroup):
@@ -60,16 +60,16 @@ class Player(BasePlayer):
 
     # congratulations Page
     congratulated = models.BooleanField(initial=False)
-    choices = models.StringField( label="Please choice an option",
-        choices=['Continue on same stage', 'Move to next stage']
-    )
+    choices = models.StringField(label="Please choice an option",
+                                 choices=['Continue on same stage', 'Move to next stage']
+                                 )
 
 
 def creating_session(subsession: Subsession):
     if subsession.round_number == 1:
         ses_stage = 1
         ses_round = 1
-        timeout = False
+        timeout = subsession.timeout_happened
         # loop to go through subsessions
         for ss in subsession.in_rounds(1, C.NUM_ROUNDS):
             ss.stage = ses_stage
@@ -77,9 +77,10 @@ def creating_session(subsession: Subsession):
             ss.timeout_happened = timeout
             ss.is_last_period = ses_round == C.ROUNDS_IN_STAGE
             if ss.is_last_period or ss.timeout_happened:
+                print("happened")
                 ses_stage += 1
                 ses_round = 1
-                ss.timeout_happened = False
+                subsession.timeout_happened = False
             else:
                 ses_round += 1
 
@@ -109,12 +110,6 @@ def get_timeout_seconds(player):
 
 def display_timer(player):
     return get_timeout_seconds(player) > 0
-
-
-def advance_stage(subsession: Subsession):
-    subsession.stage += 1
-    subsession.round = 1
-    subsession.timeout_happened = True
 
 
 def stage_number(subsesion: Subsession) -> int:
@@ -204,7 +199,7 @@ class Info(Page):
 
         if player.subsession.stage == 1:
             participant.correct_s1 = player.correct_s1
-            participant.expiry = time.time() + 30  # TODO change back to 60 * 10
+            participant.expiry = time.time() + 60 * 10  # TODO change back to 60 * 10
             if participant.table_goal is None:
                 participant.table_goal = 10
         elif player.subsession.stage == 2:
@@ -218,8 +213,6 @@ class Info(Page):
             if participant.table_goal is None:
                 participant.table_goal = 20;
 
-        if timeout_happened:
-            advance_stage(player)
 
     @staticmethod
     def is_displayed(player: Player):  # TODO use this for congratulations page
@@ -236,7 +229,7 @@ class Counting(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return get_timeout_seconds(player) > 3
+        return get_timeout_seconds(player) > 3 and not player.congratulated # Change to player move on
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
@@ -283,7 +276,6 @@ class Congratulations(Page):
     form_model = 'player'
     form_fields = ['choices']
 
-
     @staticmethod
     def is_displayed(player: Player):
         participant = player.participant
@@ -291,9 +283,12 @@ class Congratulations(Page):
         return not participant.congratulated and (player_progress >= participant.table_goal)
 
     @staticmethod
-    def before_next_page(player: Player, timeout_happened):
+    def before_next_page(player: Player,  timeout_happened, subsession: Subsession = Subsession):
         participant = player.participant
-        participant.congratulated = True
+        if player.choices == 'Continue on same stage':
+            print(timeout_happened)
+            subsession.timeout_happened = True
+            participant.congratulated = True
 
 
 class ResultsWaitPage(WaitPage):  # TODO use participants.payoff to display money
