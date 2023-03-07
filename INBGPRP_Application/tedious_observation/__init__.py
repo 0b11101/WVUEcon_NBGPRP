@@ -16,7 +16,7 @@ def comp_num_generator():
 class C(BaseConstants):
     NAME_IN_URL = 'tedious_observation'
     PLAYERS_PER_GROUP = None
-    ROUNDS_IN_STAGE = 100  # 1000 bc I want the app to be time
+    ROUNDS_IN_STAGE = 20  # 1000 bc I want the app to be time
     TIMEOUT_HAPPENS = [10, 20, 20]
     NUM_ROUNDS = 3 * ROUNDS_IN_STAGE
     PAYOUT = 0.25
@@ -42,7 +42,7 @@ class Player(BasePlayer):
 
     # Player input
     comprehension_input = models.IntegerField(blank=False)
-    zeros_guess = models.IntegerField(min=0, label="Input the amount of zeros here")
+    zeros_guess = models.IntegerField(initial=None, min=0, blank=True, label="Input the amount of zeros here")
 
     # Participant info
     correct_s1 = models.IntegerField(initial=0)
@@ -56,13 +56,15 @@ class Player(BasePlayer):
     # Stage info
     stage = models.IntegerField(initial=1)
     first_round = models.BooleanField()
-    table_goal = models.IntegerField(intitial=10, label="Table Goal (Optional)", blank=True)
+    table_goal = models.IntegerField(min=1,
+                                     intitial=10,
+                                     label="Table Goal (Optional)",
+                                     blank=True)
 
-    # congratulations Page
+    # Congratulations Page
     congratulated = models.BooleanField(initial=False)
     choices = models.StringField(label="Please choice an option",
-                                 choices=['Continue on same stage', 'Move to next stage']
-                                 )
+                                 choices=['Continue on same stage', 'Move to next stage'])
 
 
 def creating_session(subsession: Subsession):
@@ -77,12 +79,11 @@ def creating_session(subsession: Subsession):
             ss.timeout_happened = timeout
             ss.is_last_period = ses_round == C.ROUNDS_IN_STAGE
             if ss.is_last_period or ss.timeout_happened:
-                print("happened")
                 ses_stage += 1
                 ses_round = 1
-                subsession.timeout_happened = False
             else:
                 ses_round += 1
+                subsession.timeout_happened = False
 
 
 def matrix_creation(player: Player) -> [str, int, int]:
@@ -117,6 +118,8 @@ def stage_number(subsesion: Subsession) -> int:
 
 
 def correct_in_stage(player: Player) -> int:  # TODO
+    if player.field_maybe_none('zeros_guess') is None:
+        return None
     if player.round_number <= 1 and \
             player.field_maybe_none('correct') is not None:
         return int(player.correct)
@@ -206,18 +209,19 @@ class Info(Page):
             participant.correct_s2 = player.correct_s2
             participant.expiry = time.time() + 60 * 20
             if participant.table_goal is None:
-                participant.table_goal = 20;
+                participant.table_goal = 20
         else:
             participant.correct_s3 = player.correct_s3
             participant.expiry = time.time() + 60 * 20
             if participant.table_goal is None:
-                participant.table_goal = 20;
+                participant.table_goal = 20
 
 
     @staticmethod
     def is_displayed(player: Player):  # TODO use this for congratulations page
         subsession = player.subsession
-        return subsession.round == 1
+        print(subsession)
+        return subsession.round == 1 or subsession.round_number == 1
 
 
 class Counting(Page):
@@ -229,31 +233,31 @@ class Counting(Page):
 
     @staticmethod
     def is_displayed(player: Player):
-        return get_timeout_seconds(player) > 3 and not player.congratulated # Change to player move on
+        return get_timeout_seconds(player) > 3   # Change to player move on
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
         # TODO change display to participant.payoff and remove logic to look at previous player rounds.
-        if player.zeros_guess == player.zeros_actual:
+        if player.field_maybe_none('zeros_guess') == player.zeros_actual:
             player.correct = True
             player.payoff += C.PAYOUT
-            player.feedback = f'Correct: {player.zeros_guess} = {player.zeros_actual}'
+            player.feedback = f'Correct: {player.field_maybe_none("zeros_guess")} = {player.zeros_actual}'
         else:
             player.correct = False
             penalty = penalty_check(player)
             if penalty > 2:
                 player.payoff -= C.PAYOUT
-                player.feedback = f'<b>Incorrect: {player.zeros_guess} ≠ {player.zeros_actual}<br><br>' \
+                player.feedback = f'<b>Incorrect: {player.field_maybe_none("zeros_guess")} ≠ {player.zeros_actual}<br><br>' \
                                   f'<span>&Ll;</span>&nbsp' \
                                   f'Alert: 0.25 penalty!' \
                                   f'&nbsp<span>&Gg;</span></b>'
             elif penalty > 1:
-                player.feedback = f'Incorrect: {player.zeros_guess} ≠ {player.zeros_actual}<br><br>' \
+                player.feedback = f'Incorrect: {player.field_maybe_none("zeros_guess")} ≠ {player.zeros_actual}<br><br>' \
                                   f'<span>&#9888;</span>&nbsp' \
                                   f'<b>Warning: <span>&#9888;</span><br>' \
                                   f'$0.25 penalty with <br>3 consecutive wrong answers!</b>'
             else:
-                player.feedback = f'Incorrect: {player.zeros_guess} ≠ {player.zeros_actual} '
+                player.feedback = f'Incorrect: {player.field_maybe_none("zeros_guess")} ≠ {player.zeros_actual} '
 
     @staticmethod
     def js_vars(player):
@@ -283,13 +287,11 @@ class Congratulations(Page):
         return not participant.congratulated and (player_progress >= participant.table_goal)
 
     @staticmethod
-    def before_next_page(player: Player,  timeout_happened, subsession: Subsession = Subsession):
+    def before_next_page(player: Player, timeout_happened, subsession: Subsession = Subsession):
         participant = player.participant
-        if player.choices == 'Continue on same stage':
-            print(timeout_happened)
-            subsession.timeout_happened = True
-            participant.congratulated = True
-
+        participant.congratulated = True
+        if player.choices == 'Move to next stage':
+            participant.expiry = time.time()
 
 class ResultsWaitPage(WaitPage):  # TODO use participants.payoff to display money
     pass
