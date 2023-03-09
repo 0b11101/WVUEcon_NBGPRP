@@ -152,6 +152,8 @@ def correct_in_stage(player: Player) -> int:  # TODO
 
 # Checks to see if there have been three consecutive wrongs
 def penalty_check(player) -> int:
+    if player.field_maybe_none('zeros_guess') is None:
+        return 0
     if player.round_number <= 1 and \
             player.field_maybe_none('correct') is not None:
         return int(player.correct)
