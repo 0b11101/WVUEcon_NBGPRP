@@ -6,9 +6,9 @@ let data = gameTable.extract_values(js_vars.matrix)
 document.addEventListener("DOMContentLoaded", ()=>{
  gameTable.BuildTable(data)
   //Testing
- console.log("matrix: ", js_vars.matrix)
- console.log("zeros: ", js_vars.zeros)
- console.log("ones: ",js_vars.ones)
+// console.log("matrix: ", js_vars.matrix)
+//console.log("zeros: ", js_vars.zeros)
+//console.log("ones: ",js_vars.ones)
 
 })
 

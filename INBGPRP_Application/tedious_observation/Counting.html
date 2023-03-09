@@ -245,9 +245,7 @@
         let water=document.getElementById("water")
         let percent=cnt.innerText
         let correct = js_vars.correct
-        console.log(correct)
         let table_goal = ~~`{{ participant.table_goal }}`
-        console.log(table_goal)
         let interval=setInterval(function(){
             percent = correct/table_goal * 100
             cnt.innerHTML = ""+Math.floor(percent);

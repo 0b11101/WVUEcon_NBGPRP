@@ -118,8 +118,6 @@ def stage_number(subsesion: Subsession) -> int:
 
 
 def correct_in_stage(player: Player) -> int:  # TODO
-    if player.field_maybe_none('zeros_guess') is None:
-        return None
     if player.round_number <= 1 and \
             player.field_maybe_none('correct') is not None:
         return int(player.correct)
@@ -229,6 +227,7 @@ class Counting(Page):
     form_fields = ['zeros_guess', 'table_goal']
 
     get_timeout_seconds = get_timeout_seconds
+
     correct, wrong = 0, 0
 
     @staticmethod
@@ -263,6 +262,7 @@ class Counting(Page):
     def js_vars(player):
         correct_s = correct_in_stage(player)
         m_values = matrix_creation(player)
+        print(player.field_maybe_none('zeros_actual'))
         if player.round_number > 1:
             last_round = player.in_round(player.round_number - 1)
         else:
@@ -284,6 +284,7 @@ class Congratulations(Page):
     def is_displayed(player: Player):
         participant = player.participant
         player_progress = correct_in_stage(player)
+        player_progress = player_progress if player_progress is not None else 0
         return not participant.congratulated and (player_progress >= participant.table_goal)
 
     @staticmethod
@@ -298,7 +299,14 @@ class ResultsWaitPage(WaitPage):  # TODO use participants.payoff to display mone
 
 
 class Results(Page):
-    pass
+    form_model = 'player'
+    form_fields = []
+
+    @staticmethod
+    def is_displayed(player: Player):
+        subsession = player.subsession
+        print(subsession.round_number)
+        return subsession.round_number == 60
 
 
-page_sequence = [Info, Counting, Congratulations]
+page_sequence = [Info, Counting, Congratulations, Results]

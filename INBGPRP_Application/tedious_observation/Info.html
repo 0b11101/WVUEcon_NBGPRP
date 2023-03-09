@@ -136,6 +136,7 @@ Welcome!
                                         <li class="text-danger">Penalty:  -$0.25</li>
                                         <li class = "text-success">Reward: &nbsp;$0.25</li>
                                         <li>Default Goal: 1 table <br>per minute or 10 tables</li>
+                                        <li>NOT ABLE TO define your own goal!</li>
                                     </ul>
                                 </td>
                                 <td class = "table-secondary">
@@ -144,6 +145,7 @@ Welcome!
                                         <li class="text-danger">Penalty:  -$0.25</li>
                                         <li class = "text-success">Reward: &nbsp;$0.25</li>
                                         <li>Default Goal: 1 table <br>per minute or 20 tables</li>
+                                        <li>Can define your own goal!</li>
                                     </ul>
                                 </td>
                                 <td  class = "table-secondary">
@@ -152,6 +154,7 @@ Welcome!
                                         <li class="text-danger">Penalty:  -$0.25</li>
                                         <li class = "text-success">Reward: &nbsp;$0.25</li>
                                         <li>Default Goal: 1 table <br>per minute or 20 tables</li>
+                                        <li>Can define your own goal!</li>
                                     </ul>
                                 </td>
                               </tr>
@@ -169,8 +172,13 @@ Welcome!
                 document.getElementById("comp_number").classList.toggle('fade_in')
             </script>
             {{ formfield 'comprehension_input'}}
+            <text id="goal"> {{ formfield 'table_goal' }} </text>
+            <script>
+                if (~~`{{ subsession.stage }}` < 2) {
+                    document.getElementById("goal").style.display = "none"
+                }
+            </script>
 
-            {{ formfield 'table_goal' }}
             {{ next_button }}
         </div>
         <script>
